@@ -1,0 +1,173 @@
+- [x] Aatrox
+- [ ] Ahri
+- [ ] Akali
+- [ ] Akshan
+- [x] Alistar
+- [ ] Ambessa
+- [x] Amumu
+- [x] Anivia
+- [x] Annie
+- [x] Aphelios
+- [x] Ashe
+- [x] Aurelion Sol
+- [x] Aurora
+- [x] Azir
+- [x] Bard
+- [x] Bel'Veth
+- [x] Blitzcrank
+- [ ] Brand
+- [x] Braum
+- [x] Briar
+- [ ] Caitlyn
+- [ ] Camille
+- [x] Cassiopeia
+- [x] Cho'Gath
+- [x] Corki
+- [x] Darius
+- [x] Diana
+- [ ] Draven
+- [x] Dr. Mundo
+- [x] Ekko
+- [x] Elise
+- [x] Evelynn
+- [x] Ezreal
+- [ ] Fiddlesticks
+- [ ] Fiora
+- [x] Fizz
+- [x] Galio
+- [x] Gangplank
+- [x] Garen
+- [x] Gnar
+- [ ] Gragas
+- [x] Graves
+- [x] Gwen
+- [x] Hecarim
+- [ ] Heimerdinger
+- [ ] Hwei
+- [x] Illaoi
+- [x] Irelia
+- [x] Ivern
+- [ ] Janna
+- [ ] Jarvan IV
+- [x] Jax
+- [x] Jayce
+- [x] Jhin
+- [x] Jinx
+- [x] Kai'Sa
+- [ ] Kalista
+- [ ] Karma
+- [ ] Karthus
+- [x] Kassadin
+- [ ] Katarina
+- [x] Kayle
+- [x] Kayn
+- [x] Kennen
+- [ ] Kha'Zix
+- [x] Kindred
+- [ ] Kled
+- [x] Kog'Maw
+- [ ] K'Sante
+- [ ] LeBlanc
+- [x] Lee Sin
+- [x] Leona
+- [ ] Lillia
+- [ ] Lissandra
+- [x] Locke
+- [x] Lucian
+- [x] Lulu
+- [ ] Lux
+- [ ] Malphite
+- [ ] Malzahar
+- [ ] Maokai
+- [x] Master Yi
+- [ ] Mel
+- [ ] Milio
+- [x] Miss Fortune
+- [ ] Wukong
+- [x] Mordekaiser
+- [x] Morgana
+- [x] Naafiri
+- [x] Nami
+- [x] Nasus
+- [x] Nautilus
+- [x] Neeko
+- [x] Nidalee
+- [ ] Nilah
+- [ ] Nocturne
+- [x] Nunu & Willump
+- [ ] Olaf
+- [x] Orianna
+- [ ] Ornn
+- [x] Pantheon
+- [ ] Poppy
+- [ ] Pyke
+- [x] Qiyana
+- [x] Quinn
+- [ ] Rakan
+- [ ] Rammus
+- [ ] Rek'Sai
+- [x] Rell
+- [x] Renata Glasc
+- [x] Renekton
+- [x] Rengar
+- [x] Riven
+- [ ] Rumble
+- [x] Ryze
+- [ ] Samira
+- [x] Sejuani
+- [x] Senna
+- [ ] Seraphine
+- [ ] Sett
+- [ ] Shaco
+- [x] Shen
+- [x] Shyvana
+- [ ] Singed
+- [x] Sion
+- [x] Sivir
+- [ ] Skarner
+- [x] Smolder
+- [x] Sona
+- [x] Soraka
+- [x] Swain
+- [ ] Sylas
+- [ ] Syndra
+- [ ] Tahm Kench
+- [ ] Taliyah
+- [ ] Talon
+- [ ] Taric
+- [ ] Teemo
+- [x] Thresh
+- [x] Tristana
+- [x] Trundle
+- [x] Tryndamere
+- [x] Twisted Fate
+- [x] Twitch
+- [x] Udyr
+- [ ] Urgot
+- [x] Varus
+- [ ] Vayne
+- [x] Veigar
+- [ ] Vel'Koz
+- [ ] Vex
+- [x] Vi
+- [x] Viego
+- [ ] Viktor
+- [ ] Vladimir
+- [x] Volibear
+- [x] Warwick
+- [x] Xayah
+- [ ] Xerath
+- [x] Xin Zhao
+- [x] Yasuo
+- [x] Yone
+- [ ] Yorick
+- [x] Yunara
+- [x] Yuumi
+- [x] Zaahen
+- [x] Zac
+- [ ] Zed
+- [ ] Zeri
+- [ ] Ziggs
+- [x] Zilean
+- [ ] Zoe
+- [x] Zyra
