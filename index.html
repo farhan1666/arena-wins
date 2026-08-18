@@ -1088,9 +1088,7 @@
     <div class="context-menu-header" id="cm-champ-name">Champion</div>
     <div id="cm-toggle" class="context-menu-item" onclick="handleContextMenuToggle()">Toggle Completed</div>
     <div class="context-menu-divider"></div>
-    <div class="context-menu-item" onclick="handleContextMenuOpenGuide('metasrc')">📖 MetaSRC Arena Build</div>
-    <div class="context-menu-item" onclick="handleContextMenuOpenGuide('ugg')">⚡ U.GG Arena Build</div>
-    <div class="context-menu-item" onclick="handleContextMenuOpenGuide('lolalytics')">📊 Lolalytics Arena Build</div>
+    <div class="context-menu-item" onclick="handleContextMenuOpenGuide()">Open METASRC Guide</div>
     <div class="context-menu-divider"></div>
     <div class="context-menu-item" onclick="handleContextMenuCopyName()">📋 Copy Name</div>
   </div>
@@ -1110,8 +1108,7 @@
         <div class="roulette-champ-subtitle" id="roulette-subtitle">Class</div>
         <div class="roulette-links">
           <button id="roulette-mark-btn" class="btn-cyan" onclick="handleRouletteMarkWon()">✓ Mark as Won</button>
-          <button onclick="handleRouletteOpenGuide('metasrc')">📖 MetaSRC</button>
-          <button onclick="handleRouletteOpenGuide('ugg')">⚡ U.GG</button>
+          <button onclick="handleRouletteOpenGuide()">Open METASRC Guide</button>
         </div>
       </div>
       <div class="modal-footer" style="justify-content: center;">
@@ -1678,18 +1675,33 @@
       return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/champion/${champObj.id}.png`;
     }
 
-    function getGuideUrl(champName, site) {
-      const slug = champName.toLowerCase().replace(/['.]/g, "").replace(/\s+/g, "-");
-      const cleanSimple = champName.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const METASRC_SLUG_MAP = {
+      "Nunu & Willump": "nunu",
+      "Jarvan IV": "jarvan",
+      "K'Sante": "ksante",
+      "Kai'Sa": "kaisa",
+      "Kha'Zix": "khazix",
+      "Cho'Gath": "chogath",
+      "Vel'Koz": "velkoz",
+      "Bel'Veth": "belveth",
+      "Dr. Mundo": "dr-mundo",
+      "Renata Glasc": "renata-glasc",
+      "Wukong": "wukong",
+      "LeBlanc": "leblanc",
+      "Master Yi": "master-yi",
+      "Miss Fortune": "miss-fortune",
+      "Tahm Kench": "tahm-kench",
+      "Twisted Fate": "twisted-fate",
+      "Xin Zhao": "xin-zhao",
+      "Aurelion Sol": "aurelion-sol"
+    };
 
-      if (site === "metasrc") {
-        return `https://www.metasrc.com/lol/arena/champions/${slug}/build`;
-      } else if (site === "ugg") {
-        return `https://u.gg/lol/champions/${cleanSimple}/arena-build`;
-      } else if (site === "lolalytics") {
-        return `https://lolalytics.com/lol/${cleanSimple}/arena/build/`;
+    function getMetaSrcUrl(champName) {
+      let slug = METASRC_SLUG_MAP[champName];
+      if (!slug) {
+        slug = champName.toLowerCase().replace(/['.]/g, "").replace(/\s+/g, "-");
       }
-      return `https://www.google.com/search?q=${encodeURIComponent("League Arena build " + champName)}`;
+      return `https://www.metasrc.com/lol/arena/champions/${slug}/build`;
     }
 
     // --- Gamification & Tier Calculations ---
@@ -1939,9 +1951,9 @@
       hideContextMenu();
     }
 
-    function handleContextMenuOpenGuide(site) {
+    function handleContextMenuOpenGuide() {
       if (selectedContextMenuChamp) {
-        const url = getGuideUrl(selectedContextMenuChamp, site);
+        const url = getMetaSrcUrl(selectedContextMenuChamp);
         window.open(url, "_blank");
       }
       hideContextMenu();
@@ -2011,9 +2023,9 @@
       }
     }
 
-    function handleRouletteOpenGuide(site) {
+    function handleRouletteOpenGuide() {
       if (rouletteSelectedChamp) {
-        const url = getGuideUrl(rouletteSelectedChamp.name, site);
+        const url = getMetaSrcUrl(rouletteSelectedChamp.name);
         window.open(url, "_blank");
       }
     }

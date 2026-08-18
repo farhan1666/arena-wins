@@ -1,5 +1,7 @@
 # 🏆 League of Legends Arena Champion Win Tracker
 
+This README much like the rest of this project is completely vibe coded. It serves the purpose that I intended but is not something I wanted to spend a great deal of time on. If there are weird word choices, this is why.
+
 Link to site: [Arena Win Tracker](https://farhan1666.github.io/arena-wins/)
 
 A high-performance, Hextech-styled web tracker for logging champion 1st place wins in League of Legends **Arena mode** and conquering the **"Arena God" (60 Unique Champion Wins)** challenge. 
@@ -17,7 +19,7 @@ Built as a lightweight, zero-backend single-page app hosted directly on GitHub P
 * **🔍 Smart Search & Aliases**: Instant search with support for champion nicknames and acronyms (e.g. `MF`, `GP`, `ASol`, `WW`, `TK`, `TF`, `Yi`, `Mundo`, `J4`, `LB`).
 * **🔄 Auto-Updating DataDragon Integration**: Automatically checks Riot's official DataDragon API for the latest patch, champion releases, portraits, and tags, with seamless offline fallback.
 * **💾 Modern Storage & Portability**: Saves locally with automatic migration from legacy cookies, URL-safe Base64 sharing, Discord formatted summaries, and JSON backup export/import.
-* **📖 Multi-Site Arena Build Links**: Right-click or roulette shortcuts to jump directly to Arena build guides on MetaSRC, U.GG, and Lolalytics.
+* **📖 METASRC Arena Guides**: Right-click or roulette shortcuts to jump directly to champion build guides on MetaSRC.
 
 ---
 
@@ -36,7 +38,7 @@ Built as a lightweight, zero-backend single-page app hosted directly on GitHub P
 
 ### 1. Tracking Wins
 * **1-Click Mode (Default):** Click any champion portrait to immediately mark them as completed or remaining. An undo toast appears for 4 seconds if clicked by mistake.
-* **Custom Context Menu:** Right-click (or long-press on mobile) any champion portrait to quickly toggle their status, copy their name, or open their Arena build on MetaSRC, U.GG, or Lolalytics.
+* **Custom Context Menu:** Right-click (or long-press on mobile) any champion portrait to quickly toggle their status, copy their name, or open their Arena build on MetaSRC.
 
 ### 2. Sharing & Backups
 * **Share URL:** Click **🔗 Share & Data** to generate a link with your progress encoded in a compact Base64 bitfield. Friends opening your link will see a view-only snapshot that won't overwrite their local data unless they choose to import.
