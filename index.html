@@ -98,6 +98,41 @@
       color: #ffffff;
     }
 
+    /* Shared View Banner */
+    .shared-banner {
+      display: none;
+      background-color: #1e2328;
+      border-bottom: 2px solid var(--accent-cyan);
+      padding: 12px 25px;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--accent-cyan);
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    .shared-banner div {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    /* Toast Notification */
+    .toast {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--accent-gold);
+      color: var(--bg-card);
+      padding: 12px 20px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      border-radius: 2px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      z-index: 3000;
+    }
+
     /* Controls Bar */
     .controls {
       background-color: var(--bg-card);
@@ -276,7 +311,7 @@
       margin-top: 20px;
     }
 
-    /* Custom Right Click Context Menu */
+    /* Context Menu */
     .context-menu {
       display: none;
       position: fixed;
@@ -310,14 +345,23 @@
 </head>
 <body>
 
+  <div class="shared-banner" id="shared-banner">
+    <span>👁️ Viewing Shared Progress Link</span>
+    <div>
+      <button onclick="importSharedProgress()">Import to My Local Tracker</button>
+      <button onclick="exitSharedMode()" style="border-color:#555; color:#a09b8c;">Exit Shared View</button>
+    </div>
+  </div>
+
   <header>
     <div class="title-stats">
       <h1>Win Tracker</h1>
       <div class="stats" id="stats">Won: 0 | Remaining: 0 | Total: 0</div>
     </div>
     <div class="actions">
+      <button id="share-btn" onclick="shareProgress()">Share Progress Link</button>
       <button id="undo-btn" disabled onclick="undoAction()">Undo Last Action</button>
-      <button class="btn-reset" onclick="promptReset()">Reset All Progress</button>
+      <button id="reset-btn" class="btn-reset" onclick="promptReset()">Reset All Progress</button>
     </div>
   </header>
 
@@ -332,6 +376,9 @@
   </div>
 
   <div class="content" id="content-area"></div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">Link copied to clipboard!</div>
 
   <!-- Confirmation Modal -->
   <div class="modal-overlay" id="modal">
@@ -392,7 +439,6 @@
       "Bel'Veth": "Belveth"
     };
 
-    // Slug overrides for MetaSRC URLs
     const METASRC_SLUG_MAP = {
       "Nunu & Willump": "nunu",
       "Jarvan IV": "jarvan",
@@ -411,6 +457,66 @@
     let currentTab = "remaining";
     let modalCallback = null;
     let selectedContextMenuChamp = null;
+    let isSharedMode = false;
+
+    // --- Bitfield / Base64 Sharing Utilities ---
+    function encodeProgressToBase64() {
+      const numBytes = Math.ceil(ALL_CHAMPIONS.length / 8);
+      const byteArray = new Uint8Array(numBytes);
+
+      ALL_CHAMPIONS.forEach((champ, idx) => {
+        if (champions[champ]) {
+          const byteIdx = Math.floor(idx / 8);
+          const bitIdx = idx % 8;
+          byteArray[byteIdx] |= (1 << bitIdx);
+        }
+      });
+
+      let binary = '';
+      byteArray.forEach(b => binary += String.fromCharCode(b));
+      return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    function decodeProgressFromBase64(base64Str) {
+      try {
+        let pad = base64Str.replace(/-/g, '+').replace(/_/g, '/');
+        while (pad.length % 4) pad += '=';
+        const binary = atob(pad);
+        const byteArray = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+          byteArray[i] = binary.charCodeAt(i);
+        }
+
+        const decoded = {};
+        ALL_CHAMPIONS.forEach((champ, idx) => {
+          const byteIdx = Math.floor(idx / 8);
+          const bitIdx = idx % 8;
+          decoded[champ] = byteIdx < byteArray.length ? Boolean(byteArray[byteIdx] & (1 << bitIdx)) : false;
+        });
+        return decoded;
+      } catch (e) {
+        console.error("Failed to decode share code:", e);
+        return null;
+      }
+    }
+
+    function shareProgress() {
+      const code = encodeProgressToBase64();
+      const shareUrl = `${window.location.origin}${window.location.pathname}?share=${code}`;
+      
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        showToast("Share link copied to clipboard!");
+      }).catch(() => {
+        prompt("Copy your share link:", shareUrl);
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.innerText = msg;
+      toast.style.display = "block";
+      setTimeout(() => toast.style.display = "none", 3000);
+    }
 
     // --- Cookie Utilities ---
     function setCookie(name, value, days = 365) {
@@ -434,6 +540,7 @@
     }
 
     function saveToCookie() {
+      if (isSharedMode) return; // Prevent overwriting cookies in view-only mode
       const completedList = ALL_CHAMPIONS.filter(c => champions[c]);
       setCookie(COOKIE_NAME, JSON.stringify(completedList));
     }
@@ -453,6 +560,23 @@
           console.error("Failed to parse cookie data:", e);
         }
       }
+    }
+
+    function importSharedProgress() {
+      isSharedMode = false;
+      saveToCookie();
+      document.getElementById("shared-banner").style.display = "none";
+      window.history.replaceState({}, document.title, window.location.pathname);
+      showToast("Progress imported to your tracker!");
+      renderGrid();
+    }
+
+    function exitSharedMode() {
+      isSharedMode = false;
+      document.getElementById("shared-banner").style.display = "none";
+      window.history.replaceState({}, document.title, window.location.pathname);
+      loadFromCookie();
+      renderGrid();
     }
 
     // --- Image & URL Utilities ---
@@ -488,7 +612,8 @@
       const remCount = ALL_CHAMPIONS.length - wonCount;
 
       document.getElementById("stats").innerText = `Won: ${wonCount} | Remaining: ${remCount} | Total: ${ALL_CHAMPIONS.length}`;
-      document.getElementById("undo-btn").disabled = historyStack.length === 0;
+      document.getElementById("undo-btn").disabled = historyStack.length === 0 || isSharedMode;
+      document.getElementById("reset-btn").disabled = isSharedMode;
 
       if (filtered.length === 0) {
         content.innerHTML = `<p style="text-align:center; color: var(--text-muted); margin-top: 40px;">No champions found.</p>`;
@@ -542,6 +667,11 @@
 
     function handleContextMenuToggle() {
       if (selectedContextMenuChamp) {
+        if (isSharedMode) {
+          showToast("Exit shared view to edit status!");
+          hideContextMenu();
+          return;
+        }
         const champ = selectedContextMenuChamp;
         historyStack.push({ champ, prev: champions[champ] });
         champions[champ] = !champions[champ];
@@ -559,11 +689,14 @@
       hideContextMenu();
     }
 
-    // Hide context menu when clicking outside
     document.addEventListener("click", hideContextMenu);
 
     // --- Actions & Modals ---
     function promptToggle(champ) {
+      if (isSharedMode) {
+        showToast("Exit shared view to edit status!");
+        return;
+      }
       const isWon = champions[champ];
       const action = isWon ? "unmark (set as Remaining)" : "mark as COMPLETED";
       document.getElementById("modal-text").innerText = `Are you sure you want to ${action} ${champ}?`;
@@ -577,6 +710,7 @@
     }
 
     function promptReset() {
+      if (isSharedMode) return;
       document.getElementById("modal-text").innerText = "Are you sure you want to RESET all progress? This will clear all completed champions.";
       modalCallback = () => {
         ALL_CHAMPIONS.forEach(c => champions[c] = false);
@@ -598,16 +732,35 @@
     }
 
     function undoAction() {
-      if (historyStack.length === 0) return;
+      if (historyStack.length === 0 || isSharedMode) return;
       const last = historyStack.pop();
       champions[last.champ] = last.prev;
       saveToCookie();
       renderGrid();
     }
 
-    // Init
-    loadFromCookie();
-    renderGrid();
+    // --- Init Handler ---
+    function init() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const shareCode = urlParams.get("share");
+
+      if (shareCode) {
+        const decoded = decodeProgressFromBase64(shareCode);
+        if (decoded) {
+          champions = decoded;
+          isSharedMode = true;
+          document.getElementById("shared-banner").style.display = "flex";
+        } else {
+          loadFromCookie();
+        }
+      } else {
+        loadFromCookie();
+      }
+
+      renderGrid();
+    }
+
+    init();
   </script>
 </body>
 </html>

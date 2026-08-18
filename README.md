@@ -13,6 +13,7 @@ A lightweight, web-based tracker for logging champion wins in League of Legends 
 * **Zero Backend Required:** Fully client-side app hosted easily via GitHub Pages.
 * **Cookie Persistence:** Automatically saves completed champions in your browser cookies (persists for 1 year).
 * **League Client Style Grid:** Clean dark-mode UI displaying 7 columns of DataDragon champion portraits with checkmark overlays.
+* **URL Progress Sharing:** Generate a compact Base64 link to share your win progress with friends without requiring a server or database.
 * **Right-Click Context Menu:** Fast controls to bypass popups or jump straight to champion build guides.
 * **Real-time Filtering & Tabs:** Quickly filter between **Remaining**, **Completed**, and **All Champions**, with a live search bar.
 * **Safety Confirmation & Undo:** Prevents accidental clicks with confirm dialogs and full action history undo support.
@@ -27,12 +28,16 @@ A lightweight, web-based tracker for logging champion wins in League of Legends 
   * **Set as Completed / Set as Remaining:** Instantly toggles the champion's completion status without needing a confirmation popup.
   * **Open METASRC Guide:** Opens the MetaSRC Arena build page for that champion in a new browser tab.
 
-### 2. Tabs & Navigation
+### 2. Sharing Progress
+* **Share Progress Link:** Click **Share Progress Link** in the top bar to generate a shareable URL containing your current win progress in a URL-safe Base64 bitfield format.
+* **Viewing & Importing:** Opening a shared link puts the site into **Shared View** mode. Visitors can inspect your progress without altering their own local cookies, or click **Import to My Local Tracker** to copy your progress onto their own tracker.
+
+### 3. Tabs & Navigation
 * **Remaining:** Displays only champions you haven't won with yet.
 * **Completed:** Displays all champions marked as completed.
 * **All Champions:** Shows the full roster with completed champions dimmed out.
 
-### 3. Utility Tools
+### 4. Utility Tools
 * **Search Bar:** Type any champion name to instantly filter the list.
 * **Undo Last Action:** Reverts your most recent mark/unmark action.
 * **Reset All Progress:** Clears all saved progress from your browser cookies (requires confirmation).
