@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>League Champion Win Tracker</title>
+  <style>
+    :root {
+      --bg-dark: #0a141e;
+      --bg-card: #010a13;
+      --border-card: #1e2328;
+      --accent-gold: #cdbe91;
+      --accent-cyan: #00c8c8;
+      --text-muted: #a09b8c;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-dark);
+      color: #f0e6d2;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--bg-card);
+      border-bottom: 2px solid var(--border-card);
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .title-stats {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.3rem;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .stats {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button {
+      background-color: #1e2328;
+      color: var(--accent-gold);
+      border: 1px solid #c8aa6e;
+      padding: 8px 16px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #c8aa6e;
+      color: var(--bg-card);
+    }
+
+    button:disabled {
+      border-color: #444;
+      color: #555;
+      cursor: not-allowed;
+      background-color: #111;
+    }
+
+    .btn-reset {
+      border-color: #721c24;
+      color: #f8d7da;
+    }
+
+    .btn-reset:hover:not(:disabled) {
+      background-color: #721c24;
+      color: #ffffff;
+    }
+
+    /* Controls Bar */
+    .controls {
+      background-color: var(--bg-card);
+      padding: 10px 25px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      border-bottom: 1px solid var(--border-card);
+    }
+
+    .search-input {
+      flex: 1;
+      background-color: #09141d;
+      border: 1px solid #3c3c41;
+      color: #f0e6d2;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      outline: none;
+      border-radius: 2px;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-gold);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background-color: var(--bg-card);
+      padding: 0 25px;
+      border-bottom: 1px solid var(--border-card);
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      color: var(--text-muted);
+      padding: 12px 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 0;
+    }
+
+    .tab-btn.active {
+      color: var(--accent-gold);
+      border-bottom-color: var(--accent-gold);
+      background: none;
+    }
+
+    /* Grid Layout */
+    .content {
+      flex: 1;
+      padding: 25px;
+      overflow-y: auto;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 15px;
+    }
+
+    @media (max-width: 1200px) { .grid { grid-template-columns: repeat(5, 1fr); } }
+    @media (max-width: 800px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 500px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+
+    /* Champion Card */
+    .champ-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-card);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.1s ease, border-color 0.2s ease;
+    }
+
+    .champ-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-gold);
+    }
+
+    .img-wrapper {
+      position: relative;
+      width: 70px;
+      height: 70px;
+      background-color: #152535;
+      border-radius: 2px;
+      overflow: hidden;
+      border: 2px solid var(--border-card);
+    }
+
+    .champ-card.completed .img-wrapper {
+      border-color: var(--accent-cyan);
+    }
+
+    .img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .champ-card.completed .img-wrapper img {
+      filter: brightness(0.6);
+    }
+
+    .badge {
+      display: none;
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 20px;
+      height: 20px;
+      background-color: var(--accent-cyan);
+      border-radius: 50%;
+      color: var(--bg-card);
+      font-weight: bold;
+      font-size: 12px;
+      line-height: 20px;
+      text-align: center;
+    }
+
+    .champ-card.completed .badge {
+      display: block;
+    }
+
+    .champ-name {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--accent-gold);
+      text-align: center;
+      word-break: break-word;
+    }
+
+    .champ-card.completed .champ-name {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal {
+      background-color: var(--bg-card);
+      border: 2px solid var(--accent-gold);
+      padding: 25px;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    }
+
+    .modal p {
+      margin-top: 0;
+      font-size: 1rem;
+      color: #f0e6d2;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="title-stats">
+      <h1>Win Tracker</h1>
+      <div class="stats" id="stats">Won: 0 | Remaining: 0 | Total: 0</div>
+    </div>
+    <div class="actions">
+      <button id="undo-btn" disabled onclick="undoAction()">Undo Last Action</button>
+      <button class="btn-reset" onclick="promptReset()">Reset All Progress</button>
+    </div>
+  </header>
+
+  <div class="controls">
+    <input type="text" id="search-input" class="search-input" placeholder="Search champion..." oninput="renderGrid()">
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('remaining', this)">Remaining</button>
+    <button class="tab-btn" onclick="switchTab('completed', this)">Completed</button>
+    <button class="tab-btn" onclick="switchTab('all', this)">All Champions</button>
+  </div>
+
+  <div class="content" id="content-area"></div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <p id="modal-text">Confirm action?</p>
+      <div class="modal-buttons">
+        <button id="modal-confirm-btn" onclick="executeModalAction()">Yes</button>
+        <button onclick="closeModal()" style="border-color:#555; color:#a09b8c;">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const VERSION = "16.16.1";
+    const COOKIE_NAME = "lol_champ_wins";
+
+    const ALL_CHAMPIONS = [
+      "Aatrox", "Ahri", "Akali", "Akshan", "Alistar", "Ambessa", "Amumu", "Anivia", "Annie", "Aphelios", "Ashe", "Aurelion Sol", "Aurora", "Azir",
+      "Bard", "Bel'Veth", "Blitzcrank", "Brand", "Braum", "Briar", "Caitlyn", "Camille", "Cassiopeia", "Cho'Gath", "Corki", "Darius", "Diana", "Dr. Mundo", "Draven",
+      "Ekko", "Elise", "Evelynn", "Ezreal", "Fiddlesticks", "Fiora", "Fizz", "Galio", "Gangplank", "Garen", "Gnar", "Gragas", "Graves", "Gwen",
+      "Hecarim", "Heimerdinger", "Hwei", "Illaoi", "Irelia", "Ivern", "Janna", "Jarvan IV", "Jax", "Jayce", "Jhin", "Jinx",
+      "K'Sante", "Kai'Sa", "Kalista", "Karma", "Karthus", "Kassadin", "Katarina", "Kayle", "Kayn", "Kennen", "Kha'Zix", "Kindred", "Kled", "Kog'Maw",
+      "LeBlanc", "Lee Sin", "Leona", "Lillia", "Lissandra", "Locke", "Lucian", "Lulu", "Lux",
+      "Malphite", "Malzahar", "Maokai", "Master Yi", "Mel", "Milio", "Miss Fortune", "Mordekaiser", "Morgana",
+      "Naafiri", "Nami", "Nasus", "Nautilus", "Neeko", "Nidalee", "Nilah", "Nocturne", "Nunu & Willump",
+      "Olaf", "Orianna", "Ornn", "Pantheon", "Poppy", "Pyke", "Qiyana", "Quinn",
+      "Rakan", "Rammus", "Rek'Sai", "Rell", "Renata Glasc", "Renekton", "Rengar", "Riven", "Rumble", "Ryze",
+      "Samira", "Sejuani", "Senna", "Seraphine", "Sett", "Shaco", "Shen", "Shyvana", "Singed", "Sion", "Sivir", "Skarner", "Smolder", "Sona", "Soraka", "Swain", "Sylas", "Syndra",
+      "Tahm Kench", "Taliyah", "Talon", "Taric", "Teemo", "Thresh", "Tristana", "Trundle", "Tryndamere", "Twisted Fate", "Twitch",
+      "Udyr", "Urgot", "Varus", "Vayne", "Veigar", "Vel'Koz", "Vex", "Vi", "Viego", "Viktor", "Vladimir", "Volibear",
+      "Warwick", "Wukong", "Xayah", "Xerath", "Xin Zhao", "Yasuo", "Yone", "Yorick", "Yunara", "Yuumi", "Zaahen", "Zac", "Zed", "Zeri", "Ziggs", "Zilean", "Zoe", "Zyra"
+    ];
+
+    const SPECIAL_MAP = {
+      "Wukong": "MonkeyKing",
+      "Nunu & Willump": "Nunu",
+      "Renata Glasc": "Renata",
+      "Dr. Mundo": "DrMundo",
+      "Jarvan IV": "JarvanIV",
+      "Master Yi": "MasterYi",
+      "Miss Fortune": "MissFortune",
+      "Tahm Kench": "TahmKench",
+      "Twisted Fate": "TwistedFate",
+      "Xin Zhao": "XinZhao",
+      "K'Sante": "KSante",
+      "Cho'Gath": "Chogath",
+      "Kai'Sa": "Kaisa",
+      "Kha'Zix": "Khazix",
+      "LeBlanc": "Leblanc",
+      "Vel'Koz": "Velkoz",
+      "Bel'Veth": "Belveth"
+    };
+
+    let champions = {}; // { "Ahri": false, "Aatrox": true }
+    let historyStack = [];
+    let currentTab = "remaining";
+    let modalCallback = null;
+
+    // --- Cookie Utilities ---
+    function setCookie(name, value, days = 365) {
+      const d = new Date();
+      d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+      const expires = "expires=" + d.toUTCString();
+      document.cookie = `${name}=${encodeURIComponent(value)};${expires};path=/;SameSite=Strict`;
+    }
+
+    function getCookie(name) {
+      const cname = name + "=";
+      const decodedCookie = decodeURIComponent(document.cookie);
+      const ca = decodedCookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i].trim();
+        if (c.indexOf(cname) === 0) {
+          return c.substring(cname.length, c.length);
+        }
+      }
+      return "";
+    }
+
+    function saveToCookie() {
+      const completedList = ALL_CHAMPIONS.filter(c => champions[c]);
+      setCookie(COOKIE_NAME, JSON.stringify(completedList));
+    }
+
+    function loadFromCookie() {
+      ALL_CHAMPIONS.forEach(c => champions[c] = false);
+      const cookieData = getCookie(COOKIE_NAME);
+      if (cookieData) {
+        try {
+          const completedList = JSON.parse(cookieData);
+          completedList.forEach(c => {
+            if (champions.hasOwnProperty(c)) {
+              champions[c] = true;
+            }
+          });
+        } catch (e) {
+          console.error("Failed to parse cookie data:", e);
+        }
+      }
+    }
+
+    // --- Image URLs ---
+    function getDDragonId(name) {
+      if (SPECIAL_MAP[name]) return SPECIAL_MAP[name];
+      return name.replace(/[^a-zA-Z0-9]/g, "");
+    }
+
+    function getImgUrl(name) {
+      const cid = getDDragonId(name);
+      return `https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/champion/${cid}.png`;
+    }
+
+    // --- Rendering ---
+    function renderGrid() {
+      const content = document.getElementById("content-area");
+      const search = document.getElementById("search-input").value.toLowerCase();
+
+      let filtered = ALL_CHAMPIONS.filter(c => c.toLowerCase().includes(search));
+
+      if (currentTab === "remaining") filtered = filtered.filter(c => !champions[c]);
+      if (currentTab === "completed") filtered = filtered.filter(c => champions[c]);
+
+      const wonCount = ALL_CHAMPIONS.filter(c => champions[c]).length;
+      const remCount = ALL_CHAMPIONS.length - wonCount;
+
+      document.getElementById("stats").innerText = `Won: ${wonCount} | Remaining: ${remCount} | Total: ${ALL_CHAMPIONS.length}`;
+      document.getElementById("undo-btn").disabled = historyStack.length === 0;
+
+      if (filtered.length === 0) {
+        content.innerHTML = `<p style="text-align:center; color: var(--text-muted); margin-top: 40px;">No champions found.</p>`;
+        return;
+      }
+
+      let gridHTML = `<div class="grid">`;
+      filtered.forEach(champ => {
+        const isWon = champions[champ];
+        gridHTML += `
+          <div class="champ-card ${isWon ? 'completed' : ''}" onclick="promptToggle('${champ}')">
+            <div class="img-wrapper">
+              <img src="${getImgUrl(champ)}" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'70\\' height=\\'70\\'><rect width=\\'70\\' height=\\'70\\' fill=\\'%23152535\\'/></svg>';">
+              <div class="badge">✓</div>
+            </div>
+            <div class="champ-name">${champ}</div>
+          </div>
+        `;
+      });
+      gridHTML += `</div>`;
+      content.innerHTML = gridHTML;
+    }
+
+    function switchTab(tab, btn) {
+      currentTab = tab;
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderGrid();
+    }
+
+    // --- Actions & Modals ---
+    function promptToggle(champ) {
+      const isWon = champions[champ];
+      const action = isWon ? "unmark (set as Remaining)" : "mark as COMPLETED";
+      document.getElementById("modal-text").innerText = `Are you sure you want to ${action} ${champ}?`;
+      modalCallback = () => {
+        historyStack.push({ champ, prev: champions[champ] });
+        champions[champ] = !champions[champ];
+        saveToCookie();
+        renderGrid();
+      };
+      document.getElementById("modal").style.display = "flex";
+    }
+
+    function promptReset() {
+      document.getElementById("modal-text").innerText = "Are you sure you want to RESET all progress? This will clear all completed champions.";
+      modalCallback = () => {
+        ALL_CHAMPIONS.forEach(c => champions[c] = false);
+        historyStack = [];
+        saveToCookie();
+        renderGrid();
+      };
+      document.getElementById("modal").style.display = "flex";
+    }
+
+    function executeModalAction() {
+      if (modalCallback) modalCallback();
+      closeModal();
+    }
+
+    function closeModal() {
+      modalCallback = null;
+      document.getElementById("modal").style.display = "none";
+    }
+
+    function undoAction() {
+      if (historyStack.length === 0) return;
+      const last = historyStack.pop();
+      champions[last.champ] = last.prev;
+      saveToCookie();
+      renderGrid();
+    }
+
+    // Init
+    loadFromCookie();
+    renderGrid();
+  </script>
+</body>
+</html>
