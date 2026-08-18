@@ -275,6 +275,37 @@
       gap: 15px;
       margin-top: 20px;
     }
+
+    /* Custom Right Click Context Menu */
+    .context-menu {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      background-color: var(--bg-card);
+      border: 1px solid var(--accent-gold);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+      border-radius: 2px;
+      min-width: 180px;
+    }
+
+    .context-menu-item {
+      padding: 10px 15px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #f0e6d2;
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .context-menu-item:hover {
+      background-color: #c8aa6e;
+      color: var(--bg-card);
+    }
+
+    .context-menu-divider {
+      height: 1px;
+      background-color: var(--border-card);
+    }
   </style>
 </head>
 <body>
@@ -302,7 +333,7 @@
 
   <div class="content" id="content-area"></div>
 
-  <!-- Modal -->
+  <!-- Confirmation Modal -->
   <div class="modal-overlay" id="modal">
     <div class="modal">
       <p id="modal-text">Confirm action?</p>
@@ -311,6 +342,13 @@
         <button onclick="closeModal()" style="border-color:#555; color:#a09b8c;">Cancel</button>
       </div>
     </div>
+  </div>
+
+  <!-- Custom Context Menu -->
+  <div id="context-menu" class="context-menu">
+    <div id="cm-toggle" class="context-menu-item" onclick="handleContextMenuToggle()">Toggle Completed</div>
+    <div class="context-menu-divider"></div>
+    <div class="context-menu-item" onclick="handleContextMenuOpenGuide()">Open METASRC Guide</div>
   </div>
 
   <script>
@@ -354,10 +392,25 @@
       "Bel'Veth": "Belveth"
     };
 
-    let champions = {}; // { "Ahri": false, "Aatrox": true }
+    // Slug overrides for MetaSRC URLs
+    const METASRC_SLUG_MAP = {
+      "Nunu & Willump": "nunu",
+      "Jarvan IV": "jarvan",
+      "K'Sante": "ksante",
+      "Kai'Sa": "kaisa",
+      "Kha'Zix": "khazix",
+      "Cho'Gath": "chogath",
+      "Vel'Koz": "velkoz",
+      "Bel'Veth": "belveth",
+      "Dr. Mundo": "dr-mundo",
+      "Renata Glasc": "renata-glasc"
+    };
+
+    let champions = {};
     let historyStack = [];
     let currentTab = "remaining";
     let modalCallback = null;
+    let selectedContextMenuChamp = null;
 
     // --- Cookie Utilities ---
     function setCookie(name, value, days = 365) {
@@ -402,7 +455,7 @@
       }
     }
 
-    // --- Image URLs ---
+    // --- Image & URL Utilities ---
     function getDDragonId(name) {
       if (SPECIAL_MAP[name]) return SPECIAL_MAP[name];
       return name.replace(/[^a-zA-Z0-9]/g, "");
@@ -411,6 +464,14 @@
     function getImgUrl(name) {
       const cid = getDDragonId(name);
       return `https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/champion/${cid}.png`;
+    }
+
+    function getMetaSrcUrl(name) {
+      let slug = METASRC_SLUG_MAP[name];
+      if (!slug) {
+        slug = name.toLowerCase().replace(/['.]/g, "").replace(/\s+/g, "-");
+      }
+      return `https://www.metasrc.com/lol/arena/champions/${slug}/build`;
     }
 
     // --- Rendering ---
@@ -438,7 +499,9 @@
       filtered.forEach(champ => {
         const isWon = champions[champ];
         gridHTML += `
-          <div class="champ-card ${isWon ? 'completed' : ''}" onclick="promptToggle('${champ}')">
+          <div class="champ-card ${isWon ? 'completed' : ''}" 
+               onclick="promptToggle('${champ}')" 
+               oncontextmenu="openContextMenu(event, '${champ}')">
             <div class="img-wrapper">
               <img src="${getImgUrl(champ)}" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'70\\' height=\\'70\\'><rect width=\\'70\\' height=\\'70\\' fill=\\'%23152535\\'/></svg>';">
               <div class="badge">✓</div>
@@ -457,6 +520,47 @@
       btn.classList.add("active");
       renderGrid();
     }
+
+    // --- Context Menu Handlers ---
+    function openContextMenu(e, champ) {
+      e.preventDefault();
+      selectedContextMenuChamp = champ;
+      const menu = document.getElementById("context-menu");
+      const isWon = champions[champ];
+
+      document.getElementById("cm-toggle").innerText = isWon ? "Set as Remaining" : "Set as Completed";
+
+      menu.style.left = `${e.clientX}px`;
+      menu.style.top = `${e.clientY}px`;
+      menu.style.display = "block";
+    }
+
+    function hideContextMenu() {
+      document.getElementById("context-menu").style.display = "none";
+      selectedContextMenuChamp = null;
+    }
+
+    function handleContextMenuToggle() {
+      if (selectedContextMenuChamp) {
+        const champ = selectedContextMenuChamp;
+        historyStack.push({ champ, prev: champions[champ] });
+        champions[champ] = !champions[champ];
+        saveToCookie();
+        renderGrid();
+      }
+      hideContextMenu();
+    }
+
+    function handleContextMenuOpenGuide() {
+      if (selectedContextMenuChamp) {
+        const url = getMetaSrcUrl(selectedContextMenuChamp);
+        window.open(url, "_blank");
+      }
+      hideContextMenu();
+    }
+
+    // Hide context menu when clicking outside
+    document.addEventListener("click", hideContextMenu);
 
     // --- Actions & Modals ---
     function promptToggle(champ) {
