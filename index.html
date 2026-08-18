@@ -3,469 +3,1640 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>League Champion Win Tracker</title>
+  <title>Arena Win Tracker | League of Legends Arena God Challenge</title>
+  <meta name="description" content="Track your champion 1st place wins in League of Legends Arena mode. Track progress toward the 60-win Arena God challenge title, roll random champions, and share progress.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
     :root {
-      --bg-dark: #0a141e;
-      --bg-card: #010a13;
-      --border-card: #1e2328;
-      --accent-gold: #cdbe91;
-      --accent-cyan: #00c8c8;
+      --bg-void: #010a13;
+      --bg-dark: #091428;
+      --bg-card: #0a141e;
+      --bg-card-hover: #152535;
+      --bg-surface: #0e1c2e;
+      
+      --gold-1: #f0e6d2;
+      --gold-2: #c8aa6e;
+      --gold-3: #c89b3c;
+      --gold-4: #785a28;
+      --gold-5: #463714;
+      
+      --cyan-1: #0ac8b9;
+      --cyan-2: #0397ab;
+      --cyan-3: #005a82;
+      
+      --red-1: #e84057;
+      --red-2: #721c24;
+      
+      --text-main: #f0e6d2;
       --text-muted: #a09b8c;
+      --text-dim: #5c5b57;
+      
+      --border-card: #1e282d;
+      --border-gold: rgba(200, 170, 110, 0.4);
+      --border-cyan: rgba(10, 200, 185, 0.5);
+      
+      --shadow-hextech: 0 0 15px rgba(200, 170, 110, 0.15);
+      --shadow-cyan: 0 0 15px rgba(10, 200, 185, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
       margin: 0;
       padding: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg-dark);
-      color: #f0e6d2;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 50% 0%, #091c30 0%, var(--bg-void) 70%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
     }
 
+    /* --- Shared View Banner --- */
+    .shared-banner {
+      display: none;
+      background: linear-gradient(90deg, #091c30 0%, #005a82 50%, #091c30 100%);
+      border-bottom: 2px solid var(--cyan-1);
+      padding: 10px 24px;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--cyan-1);
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      z-index: 100;
+    }
+    .shared-banner-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* --- Header & Brand --- */
     header {
-      background-color: var(--bg-card);
-      border-bottom: 2px solid var(--border-card);
-      padding: 15px 25px;
+      background: rgba(10, 20, 30, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-gold);
+      padding: 16px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .header-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 15px;
+      gap: 16px;
     }
 
-    .title-stats {
+    .brand-section {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 14px;
     }
 
-    h1 {
+    .brand-icon {
+      font-size: 1.8rem;
+      filter: drop-shadow(0 0 8px rgba(200, 170, 110, 0.6));
+    }
+
+    .brand-title h1 {
       margin: 0;
-      font-size: 1.3rem;
-      color: var(--accent-gold);
+      font-family: 'Cinzel', serif;
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      background: linear-gradient(135deg, #fff2cc 0%, var(--gold-2) 60%, var(--gold-4) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       text-transform: uppercase;
-      letter-spacing: 1px;
     }
 
-    .stats {
-      font-size: 0.95rem;
+    .brand-title .subtitle {
+      font-size: 0.78rem;
       color: var(--text-muted);
-      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
     }
 
-    .actions {
+    .header-actions {
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-wrap: wrap;
     }
 
+    /* Buttons */
     button {
-      background-color: #1e2328;
-      color: var(--accent-gold);
-      border: 1px solid #c8aa6e;
-      padding: 8px 16px;
-      font-weight: bold;
-      font-size: 0.85rem;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, #1e282d 0%, #101921 100%);
+      color: var(--gold-2);
+      border: 1px solid var(--gold-3);
+      padding: 8px 15px;
+      font-weight: 600;
+      font-size: 0.84rem;
       cursor: pointer;
-      border-radius: 2px;
-      transition: all 0.2s ease;
+      border-radius: 4px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       display: inline-flex;
       align-items: center;
+      gap: 6px;
+      user-select: none;
+      box-shadow: inset 0 0 6px rgba(200, 170, 110, 0.1);
     }
 
     button:hover:not(:disabled) {
-      background-color: #c8aa6e;
-      color: var(--bg-card);
+      background: linear-gradient(180deg, var(--gold-3) 0%, var(--gold-4) 100%);
+      color: #010a13;
+      border-color: var(--gold-1);
+      box-shadow: 0 0 12px rgba(200, 170, 110, 0.4);
+      transform: translateY(-1px);
+    }
+
+    button:active:not(:disabled) {
+      transform: translateY(0);
     }
 
     button:disabled {
-      border-color: #444;
-      color: #555;
+      border-color: #2a353d;
+      color: #505c66;
       cursor: not-allowed;
-      background-color: #111;
+      background: #0d161d;
+      box-shadow: none;
     }
 
-    .btn-reset {
-      border-color: #721c24;
-      color: #f8d7da;
+    .btn-primary {
+      background: linear-gradient(180deg, #c89b3c 0%, #785a28 100%);
+      color: #010a13;
+      border-color: #f0e6d2;
+      font-weight: 700;
     }
 
-    .btn-reset:hover:not(:disabled) {
-      background-color: #721c24;
-      color: #ffffff;
+    .btn-primary:hover:not(:disabled) {
+      background: linear-gradient(180deg, #f0e6d2 0%, #c8aa6e 100%);
+      color: #010a13;
+      box-shadow: 0 0 16px rgba(240, 230, 210, 0.5);
     }
 
-    /* Shared View Banner */
-    .shared-banner {
-      display: none;
-      background-color: #1e2328;
-      border-bottom: 2px solid var(--accent-cyan);
-      padding: 12px 25px;
+    .btn-cyan {
+      background: linear-gradient(180deg, #0397ab 0%, #005a82 100%);
+      color: #fff;
+      border-color: var(--cyan-1);
+    }
+
+    .btn-cyan:hover:not(:disabled) {
+      background: linear-gradient(180deg, var(--cyan-1) 0%, var(--cyan-2) 100%);
+      color: #010a13;
+      box-shadow: 0 0 14px rgba(10, 200, 185, 0.5);
+    }
+
+    .btn-danger {
+      border-color: var(--red-1);
+      color: #ff99a8;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background: var(--red-1);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(232, 64, 87, 0.4);
+    }
+
+    /* --- Milestone & Progress Section --- */
+    .progress-dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      background: rgba(1, 10, 19, 0.6);
+      padding: 12px 18px;
+      border-radius: 6px;
+      border: 1px solid var(--border-card);
+    }
+
+    @media (max-width: 768px) {
+      .progress-dashboard {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .progress-box {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .progress-box-header {
+      display: flex;
       justify-content: space-between;
       align-items: center;
-      color: var(--accent-cyan);
-      font-weight: bold;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .progress-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--gold-1);
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.5px;
+    }
+
+    .progress-count {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+
+    .progress-count strong {
+      color: var(--gold-2);
       font-size: 0.95rem;
     }
 
-    .shared-banner div {
-      display: flex;
+    .tier-badge {
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-flex;
       align-items: center;
-      gap: 15px;
+      gap: 4px;
+      border: 1px solid currentColor;
     }
 
-    /* Toast Notification */
-    .toast {
-      display: none;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: var(--accent-gold);
-      color: var(--bg-card);
-      padding: 12px 20px;
-      font-weight: bold;
-      font-size: 0.9rem;
-      border-radius: 2px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-      z-index: 3000;
+    .tier-iron { color: #9c9c9c; border-color: #666; background: rgba(100,100,100,0.15); }
+    .tier-bronze { color: #cd7f32; border-color: #a05a20; background: rgba(205,127,50,0.15); }
+    .tier-silver { color: #b8c7d9; border-color: #798a9c; background: rgba(184,199,217,0.15); }
+    .tier-gold { color: #ffd700; border-color: #cca300; background: rgba(255,215,0,0.15); }
+    .tier-platinum { color: #2ec4b6; border-color: #1b8a80; background: rgba(46,196,182,0.15); }
+    .tier-diamond { color: #9d8df1; border-color: #6953d6; background: rgba(157,141,241,0.15); }
+    .tier-master { color: #e066ff; border-color: #aa22cc; background: rgba(224,102,255,0.15); }
+    .tier-grandmaster { color: #ff4d4d; border-color: #cc2222; background: rgba(255,77,77,0.15); }
+    .tier-challenger { color: #f4c430; border-color: #ffd700; background: rgba(244,196,48,0.25); box-shadow: 0 0 8px rgba(255,215,0,0.4); }
+    .tier-arenagod { color: #0ac8b9; border-color: #0ac8b9; background: rgba(10,200,185,0.25); box-shadow: 0 0 12px rgba(10,200,185,0.6); animation: pulseGlow 2s infinite ease-in-out; }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 8px rgba(10,200,185,0.4); }
+      50% { box-shadow: 0 0 18px rgba(10,200,185,0.9); }
     }
 
-    /* Controls Bar */
-    .controls {
-      background-color: var(--bg-card);
-      padding: 10px 25px;
-      display: flex;
-      gap: 15px;
-      align-items: center;
+    .progress-track {
+      height: 8px;
+      background: #09131d;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid #1a2835;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .progress-fill-arena {
+      background: linear-gradient(90deg, #c89b3c 0%, #0ac8b9 100%);
+      box-shadow: 0 0 10px rgba(10, 200, 185, 0.5);
+    }
+
+    .progress-fill-total {
+      background: linear-gradient(90deg, #785a28 0%, #c8aa6e 100%);
+      box-shadow: 0 0 8px rgba(200, 170, 110, 0.4);
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+      animation: shimmer 2.5s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* --- Controls Bar & Filters --- */
+    .controls-container {
+      background: rgba(10, 20, 30, 0.7);
       border-bottom: 1px solid var(--border-card);
+      padding: 12px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .search-and-tabs {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .search-box-wrapper {
+      position: relative;
+      flex: 1;
+      max-width: 380px;
+      min-width: 220px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      pointer-events: none;
     }
 
     .search-input {
-      flex: 1;
-      background-color: #09141d;
-      border: 1px solid #3c3c41;
-      color: #f0e6d2;
-      padding: 8px 12px;
-      font-size: 0.9rem;
+      width: 100%;
+      background-color: #05101a;
+      border: 1px solid #1e282d;
+      color: var(--text-main);
+      padding: 8px 36px 8px 34px;
+      font-size: 0.88rem;
+      font-family: inherit;
       outline: none;
-      border-radius: 2px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
     }
 
     .search-input:focus {
-      border-color: var(--accent-gold);
+      border-color: var(--gold-2);
+      box-shadow: 0 0 10px rgba(200, 170, 110, 0.25);
+      background-color: #071524;
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      display: none;
+    }
+
+    .search-clear:hover {
+      color: var(--gold-1);
+    }
+
+    .search-hint {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      border: 1px solid #2a3845;
+      padding: 1px 4px;
+      border-radius: 3px;
+      pointer-events: none;
     }
 
     /* Tabs */
-    .tabs {
+    .status-tabs {
       display: flex;
-      background-color: var(--bg-card);
-      padding: 0 25px;
-      border-bottom: 1px solid var(--border-card);
+      background: #06111b;
+      border: 1px solid var(--border-card);
+      border-radius: 6px;
+      padding: 3px;
+      gap: 2px;
     }
 
     .tab-btn {
       background: none;
       border: none;
-      border-bottom: 3px solid transparent;
       color: var(--text-muted);
-      padding: 12px 20px;
-      font-size: 0.9rem;
-      font-weight: bold;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
       cursor: pointer;
-      border-radius: 0;
+      border-radius: 4px;
+      transition: all 0.15s ease;
+      box-shadow: none;
+    }
+
+    .tab-btn:hover {
+      color: var(--gold-1);
+      background: rgba(200, 170, 110, 0.1);
+      box-shadow: none;
+      transform: none;
     }
 
     .tab-btn.active {
-      color: var(--accent-gold);
-      border-bottom-color: var(--accent-gold);
-      background: none;
+      background: linear-gradient(180deg, #1e2a36 0%, #101c27 100%);
+      color: var(--gold-2);
+      border: 1px solid var(--gold-4);
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     }
 
-    /* Grid Layout */
-    .content {
+    /* Role Pills */
+    .role-filters {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .role-filter-label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .role-pill {
+      background: #07131e;
+      border: 1px solid #1a2733;
+      color: var(--text-muted);
+      padding: 4px 10px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: none;
+    }
+
+    .role-pill:hover {
+      border-color: var(--gold-3);
+      color: var(--gold-1);
+      transform: none;
+      box-shadow: none;
+    }
+
+    .role-pill.active {
+      background: var(--gold-3);
+      color: #010a13;
+      border-color: var(--gold-1);
+      font-weight: 700;
+    }
+
+    /* --- Main Grid Content --- */
+    .content-container {
       flex: 1;
-      padding: 25px;
+      padding: 24px 28px;
       overflow-y: auto;
     }
 
-    .grid {
+    .champ-grid {
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 15px;
+      grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+      gap: 12px;
     }
-
-    @media (max-width: 1200px) { .grid { grid-template-columns: repeat(5, 1fr); } }
-    @media (max-width: 800px) { .grid { grid-template-columns: repeat(3, 1fr); } }
-    @media (max-width: 500px) { .grid { grid-template-columns: repeat(2, 1fr); } }
 
     /* Champion Card */
     .champ-card {
-      background-color: var(--bg-card);
+      background: var(--bg-card);
       border: 1px solid var(--border-card);
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 10px;
-      border-radius: 4px;
+      padding: 6px;
+      border-radius: 6px;
       cursor: pointer;
       user-select: none;
-      transition: transform 0.1s ease, border-color 0.2s ease;
+      transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
     }
 
     .champ-card:hover {
-      transform: translateY(-2px);
-      border-color: var(--accent-gold);
+      transform: translateY(-4px) scale(1.03);
+      border-color: var(--gold-2);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6), var(--shadow-hextech);
+      z-index: 5;
     }
 
-    .img-wrapper {
+    .portrait-wrap {
       position: relative;
-      width: 70px;
-      height: 70px;
-      background-color: #152535;
-      border-radius: 2px;
+      width: 66px;
+      height: 66px;
+      background: #0e1a26;
+      border-radius: 4px;
       overflow: hidden;
-      border: 2px solid var(--border-card);
+      border: 2px solid #1a2835;
+      transition: border-color 0.2s ease;
     }
 
-    .champ-card.completed .img-wrapper {
-      border-color: var(--accent-cyan);
+    .champ-card:hover .portrait-wrap {
+      border-color: var(--gold-2);
     }
 
-    .img-wrapper img {
+    .portrait-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: filter 0.2s ease, transform 0.2s ease;
     }
 
-    .champ-card.completed .img-wrapper img {
-      filter: brightness(0.6);
+    .champ-card:hover .portrait-img {
+      transform: scale(1.05);
     }
 
-    .badge {
+    /* Completed Champion State */
+    .champ-card.completed {
+      background: rgba(4, 18, 25, 0.6);
+      border-color: rgba(10, 200, 185, 0.35);
+    }
+
+    .champ-card.completed .portrait-wrap {
+      border-color: var(--cyan-1);
+      box-shadow: inset 0 0 8px rgba(10, 200, 185, 0.4);
+    }
+
+    .champ-card.completed .portrait-img {
+      filter: brightness(0.45) saturate(0.8);
+    }
+
+    .win-overlay {
       display: none;
       position: absolute;
-      top: 2px;
-      right: 2px;
-      width: 20px;
-      height: 20px;
-      background-color: var(--accent-cyan);
-      border-radius: 50%;
-      color: var(--bg-card);
-      font-weight: bold;
-      font-size: 12px;
-      line-height: 20px;
-      text-align: center;
+      top: 0; left: 0; right: 0; bottom: 0;
+      align-items: center;
+      justify-content: center;
+      background: rgba(1, 10, 19, 0.35);
     }
 
-    .champ-card.completed .badge {
-      display: block;
+    .champ-card.completed .win-overlay {
+      display: flex;
+    }
+
+    .win-badge {
+      width: 26px;
+      height: 26px;
+      background: linear-gradient(135deg, var(--cyan-1) 0%, var(--cyan-2) 100%);
+      border: 1.5px solid #fff;
+      border-radius: 50%;
+      color: #010a13;
+      font-weight: 900;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 10px rgba(10, 200, 185, 0.8);
     }
 
     .champ-name {
-      margin-top: 8px;
-      font-size: 0.85rem;
-      font-weight: bold;
-      color: var(--accent-gold);
+      margin-top: 6px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--gold-1);
       text-align: center;
-      word-break: break-word;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color 0.2s ease;
     }
 
     .champ-card.completed .champ-name {
-      color: var(--text-muted);
-      text-decoration: line-through;
+      color: var(--cyan-1);
+      opacity: 0.85;
     }
 
-    /* Modal */
-    .modal-overlay {
+    .champ-role-tag {
+      font-size: 0.62rem;
+      color: var(--text-dim);
+      margin-top: 1px;
+      text-transform: uppercase;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state h3 {
+      font-family: 'Cinzel', serif;
+      color: var(--gold-2);
+      margin-bottom: 8px;
+    }
+
+    /* --- Modals & Overlays --- */
+    .modal-backdrop {
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(1, 10, 19, 0.85);
+      backdrop-filter: blur(6px);
       z-index: 1000;
       justify-content: center;
       align-items: center;
+      padding: 16px;
+      animation: fadeIn 0.2s ease;
     }
 
-    .modal {
-      background-color: var(--bg-card);
-      border: 2px solid var(--accent-gold);
-      padding: 25px;
-      width: 320px;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
-    .modal p {
-      margin-top: 0;
-      font-size: 1rem;
-      color: #f0e6d2;
+    .modal-box {
+      background: linear-gradient(180deg, #0d1b2a 0%, var(--bg-void) 100%);
+      border: 2px solid var(--gold-2);
+      border-radius: 8px;
+      padding: 24px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), var(--shadow-hextech);
+      position: relative;
+      animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .modal-buttons {
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
       display: flex;
-      justify-content: center;
-      gap: 15px;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-gold);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-family: 'Cinzel', serif;
+      font-size: 1.25rem;
+      color: var(--gold-1);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 0 4px;
+      box-shadow: none;
+    }
+    .modal-close:hover {
+      color: #fff;
+      background: none;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .modal-body {
+      font-size: 0.92rem;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
       margin-top: 20px;
+      border-top: 1px solid var(--border-card);
+      padding-top: 16px;
+    }
+
+    /* Roulette Random Picker Modal Specifics */
+    .roulette-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 0;
+    }
+
+    .roulette-portrait-frame {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 3px solid var(--gold-2);
+      overflow: hidden;
+      box-shadow: 0 0 25px rgba(200, 170, 110, 0.6);
+      position: relative;
+      margin-bottom: 14px;
+      background: #010a13;
+    }
+
+    .roulette-portrait-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: filter 0.2s ease;
+    }
+
+    .roulette-champ-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--gold-1);
+      margin-bottom: 2px;
+      text-align: center;
+    }
+
+    .roulette-champ-subtitle {
+      font-size: 0.85rem;
+      color: var(--cyan-1);
+      margin-bottom: 12px;
+      text-transform: capitalize;
+    }
+
+    .roulette-links {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .toast {
+      pointer-events: auto;
+      background: linear-gradient(135deg, #0e1d2c 0%, #06111c 100%);
+      border: 1px solid var(--gold-2);
+      color: var(--gold-1);
+      padding: 12px 18px;
+      font-size: 0.88rem;
+      border-radius: 6px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), var(--shadow-hextech);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: toastIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes toastIn {
+      from { transform: translateX(50px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .toast-undo-btn {
+      background: var(--gold-3);
+      color: #010a13;
+      border: 1px solid var(--gold-1);
+      padding: 3px 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: 3px;
+      cursor: pointer;
     }
 
     /* Context Menu */
     .context-menu {
       display: none;
       position: fixed;
-      z-index: 2000;
-      background-color: var(--bg-card);
-      border: 1px solid var(--accent-gold);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
-      border-radius: 2px;
-      min-width: 180px;
+      z-index: 2500;
+      background: #0b1724;
+      border: 1px solid var(--gold-2);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9), 0 0 10px rgba(200, 170, 110, 0.2);
+      border-radius: 4px;
+      min-width: 200px;
+      overflow: hidden;
+    }
+
+    .context-menu-header {
+      padding: 8px 14px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--gold-2);
+      background: #07101a;
+      border-bottom: 1px solid var(--border-card);
     }
 
     .context-menu-item {
-      padding: 10px 15px;
-      font-size: 0.85rem;
-      font-weight: bold;
-      color: #f0e6d2;
+      padding: 10px 14px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-main);
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       transition: background-color 0.15s ease, color 0.15s ease;
     }
 
     .context-menu-item:hover {
-      background-color: #c8aa6e;
-      color: var(--bg-card);
+      background-color: var(--gold-3);
+      color: #010a13;
     }
 
     .context-menu-divider {
       height: 1px;
       background-color: var(--border-card);
     }
+
+    /* Settings & Data Tabs in Modal */
+    .data-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-card);
+      margin-bottom: 16px;
+      gap: 4px;
+    }
+
+    .data-tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-muted);
+      padding: 8px 12px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .data-tab-btn.active {
+      color: var(--gold-2);
+      border-bottom-color: var(--gold-2);
+      background: none;
+      box-shadow: none;
+    }
+
+    .code-box {
+      width: 100%;
+      background: #050d15;
+      border: 1px solid #1a2733;
+      color: #7ce3d8;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      border-radius: 4px;
+      resize: vertical;
+      min-height: 80px;
+      outline: none;
+    }
+
+    .hotkey-tag {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      background: #07131e;
+      border: 1px solid #203242;
+      padding: 1px 4px;
+      border-radius: 3px;
+      margin-left: auto;
+    }
+
+    /* Toggle Switch */
+    .switch-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #14202c;
+    }
+
+    .switch-label {
+      font-size: 0.86rem;
+      color: var(--text-main);
+    }
+    .switch-desc {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 42px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #1e282d;
+      transition: .2s;
+      border-radius: 22px;
+      border: 1px solid var(--border-card);
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 2px;
+      bottom: 2px;
+      background-color: var(--text-muted);
+      transition: .2s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--cyan-3);
+      border-color: var(--cyan-1);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+      background-color: var(--cyan-1);
+    }
   </style>
 </head>
 <body>
 
+  <!-- Shared View Banner -->
   <div class="shared-banner" id="shared-banner">
-    <span>👁️ Viewing Shared Progress Link</span>
-    <div>
-      <button onclick="importSharedProgress()">Import to My Local Tracker</button>
-      <button onclick="exitSharedMode()" style="border-color:#555; color:#a09b8c;">Exit Shared View</button>
+    <span>👁️ Viewing Shared Arena Win Progress</span>
+    <div class="shared-banner-actions">
+      <button class="btn-cyan" onclick="importSharedProgress()">Import to My Tracker</button>
+      <button onclick="exitSharedMode()">Exit Shared View</button>
     </div>
   </div>
 
+  <!-- Header -->
   <header>
-    <div class="title-stats">
-      <h1>Win Tracker</h1>
-      <div class="stats" id="stats">Won: 0 | Remaining: 0 | Total: 0</div>
+    <div class="header-top">
+      <div class="brand-section">
+        <span class="brand-icon">🏆</span>
+        <div class="brand-title">
+          <h1>Arena Win Tracker</h1>
+          <div class="subtitle" id="patch-indicator">League of Legends • Arena God Tracker</div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-primary" id="btn-roll" onclick="openRouletteModal()" title="Randomly pick a champion to play next (Hotkey: R or Space)">
+          🎲 Roll Champion <span class="hotkey-tag">R</span>
+        </button>
+        <button id="undo-btn" disabled onclick="undoAction()" title="Undo last mark/unmark action (Hotkey: Ctrl+Z)">
+          ↺ Undo <span class="hotkey-tag">Ctrl+Z</span>
+        </button>
+        <button onclick="openShareModal()">
+          🔗 Share & Data
+        </button>
+        <button onclick="openSettingsModal()" title="Preferences & Click Options">
+          ⚙️ Settings
+        </button>
+      </div>
     </div>
-    <div class="actions">
-      <button id="share-btn" onclick="shareProgress()">Share Progress Link</button>
-      <button id="undo-btn" disabled onclick="undoAction()">Undo Last Action</button>
-      <button id="reset-btn" class="btn-reset" onclick="promptReset()">Reset All Progress</button>
+
+    <!-- Gamification & Progress Dashboard -->
+    <div class="progress-dashboard">
+      <!-- Arena God 60 Wins Challenge -->
+      <div class="progress-box">
+        <div class="progress-box-header">
+          <span class="progress-title">
+            👑 Arena God Challenge
+            <span class="tier-badge" id="arena-tier-badge">Iron Arena</span>
+          </span>
+          <span class="progress-count" id="arena-god-count">
+            <strong id="arena-god-val">0</strong> / 60 (<span id="arena-god-pct">0%</span>)
+          </span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill progress-fill-arena" id="arena-god-fill" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Total Roster Mastery -->
+      <div class="progress-box">
+        <div class="progress-box-header">
+          <span class="progress-title">
+            🌟 Roster Mastery
+          </span>
+          <span class="progress-count" id="roster-mastery-count">
+            Won: <strong id="won-count-val">0</strong> | Remaining: <strong id="rem-count-val">0</strong> | Total: <span id="total-count-val">0</span>
+          </span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill progress-fill-total" id="roster-fill" style="width: 0%;"></div>
+        </div>
+      </div>
     </div>
   </header>
 
-  <div class="controls">
-    <input type="text" id="search-input" class="search-input" placeholder="Search champion..." oninput="renderGrid()">
+  <!-- Controls, Search, Status Tabs & Role Filters -->
+  <div class="controls-container">
+    <div class="search-and-tabs">
+      <div class="search-box-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" class="search-input" placeholder="Search champion or alias (e.g. MF, J4, ASol)..." oninput="handleSearchInput()">
+        <span id="search-clear" class="search-clear" onclick="clearSearch()">✕</span>
+        <span class="search-hint">/</span>
+      </div>
+
+      <div class="status-tabs">
+        <button class="tab-btn active" id="tab-remaining" onclick="switchTab('remaining', this)">Remaining (<span id="tab-rem-cnt">0</span>)</button>
+        <button class="tab-btn" id="tab-completed" onclick="switchTab('completed', this)">Completed (<span id="tab-comp-cnt">0</span>)</button>
+        <button class="tab-btn" id="tab-all" onclick="switchTab('all', this)">All (<span id="tab-all-cnt">0</span>)</button>
+      </div>
+    </div>
+
+    <div class="role-filters">
+      <span class="role-filter-label">Class Filter:</span>
+      <button class="role-pill active" onclick="switchRole('all', this)">All</button>
+      <button class="role-pill" onclick="switchRole('Fighter', this)">Fighter</button>
+      <button class="role-pill" onclick="switchRole('Tank', this)">Tank</button>
+      <button class="role-pill" onclick="switchRole('Mage', this)">Mage</button>
+      <button class="role-pill" onclick="switchRole('Assassin', this)">Assassin</button>
+      <button class="role-pill" onclick="switchRole('Marksman', this)">Marksman</button>
+      <button class="role-pill" onclick="switchRole('Support', this)">Support</button>
+    </div>
   </div>
 
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('remaining', this)">Remaining</button>
-    <button class="tab-btn" onclick="switchTab('completed', this)">Completed</button>
-    <button class="tab-btn" onclick="switchTab('all', this)">All Champions</button>
+  <!-- Champion Grid Area -->
+  <div class="content-container">
+    <div class="champ-grid" id="champ-grid"></div>
   </div>
 
-  <div class="content" id="content-area"></div>
+  <!-- Toast Notification Stack -->
+  <div class="toast-container" id="toast-container"></div>
 
-  <!-- Toast Notification -->
-  <div id="toast" class="toast">Link copied to clipboard!</div>
+  <!-- Context Menu -->
+  <div id="context-menu" class="context-menu">
+    <div class="context-menu-header" id="cm-champ-name">Champion</div>
+    <div id="cm-toggle" class="context-menu-item" onclick="handleContextMenuToggle()">Toggle Completed</div>
+    <div class="context-menu-divider"></div>
+    <div class="context-menu-item" onclick="handleContextMenuOpenGuide('metasrc')">📖 MetaSRC Arena Build</div>
+    <div class="context-menu-item" onclick="handleContextMenuOpenGuide('ugg')">⚡ U.GG Arena Build</div>
+    <div class="context-menu-item" onclick="handleContextMenuOpenGuide('lolalytics')">📊 Lolalytics Arena Build</div>
+    <div class="context-menu-divider"></div>
+    <div class="context-menu-item" onclick="handleContextMenuCopyName()">📋 Copy Name</div>
+  </div>
 
-  <!-- Confirmation Modal -->
-  <div class="modal-overlay" id="modal">
-    <div class="modal">
-      <p id="modal-text">Confirm action?</p>
-      <div class="modal-buttons">
-        <button id="modal-confirm-btn" onclick="executeModalAction()">Yes</button>
-        <button onclick="closeModal()" style="border-color:#555; color:#a09b8c;">Cancel</button>
+  <!-- Roulette / Random Champion Modal -->
+  <div class="modal-backdrop" id="roulette-modal">
+    <div class="modal-box" style="text-align: center;">
+      <div class="modal-header">
+        <h2>🎲 Arena Champion Roulette</h2>
+        <button class="modal-close" onclick="closeModal('roulette-modal')">✕</button>
+      </div>
+      <div class="roulette-container">
+        <div class="roulette-portrait-frame">
+          <img id="roulette-img" class="roulette-portrait-img" src="" alt="Champion">
+        </div>
+        <div class="roulette-champ-title" id="roulette-name">Rolling...</div>
+        <div class="roulette-champ-subtitle" id="roulette-subtitle">Class</div>
+        <div class="roulette-links">
+          <button id="roulette-mark-btn" class="btn-cyan" onclick="handleRouletteMarkWon()">✓ Mark as Won</button>
+          <button onclick="handleRouletteOpenGuide('metasrc')">📖 MetaSRC</button>
+          <button onclick="handleRouletteOpenGuide('ugg')">⚡ U.GG</button>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: center;">
+        <button class="btn-primary" onclick="spinRoulette()">🎲 Spin Again (Space / R)</button>
+        <button onclick="closeModal('roulette-modal')">Done</button>
       </div>
     </div>
   </div>
 
-  <!-- Custom Context Menu -->
-  <div id="context-menu" class="context-menu">
-    <div id="cm-toggle" class="context-menu-item" onclick="handleContextMenuToggle()">Toggle Completed</div>
-    <div class="context-menu-divider"></div>
-    <div class="context-menu-item" onclick="handleContextMenuOpenGuide()">Open METASRC Guide</div>
+  <!-- Share / Data Modal -->
+  <div class="modal-backdrop" id="share-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>🔗 Share & Data Management</h2>
+        <button class="modal-close" onclick="closeModal('share-modal')">✕</button>
+      </div>
+
+      <div class="data-tabs">
+        <button class="data-tab-btn active" onclick="switchDataTab('share-link', this)">Share Link</button>
+        <button class="data-tab-btn" onclick="switchDataTab('discord-summary', this)">Text / Discord</button>
+        <button class="data-tab-btn" onclick="switchDataTab('backup-restore', this)">Backup & JSON</button>
+        <button class="data-tab-btn" onclick="switchDataTab('reset-data', this)" style="color: #ff99a8;">Reset</button>
+      </div>
+
+      <!-- Tab: Share Link -->
+      <div id="data-sec-share-link">
+        <p style="font-size: 0.86rem; color: var(--text-muted); margin-top: 0;">
+          Generate a URL-safe link with your progress encoded. Anyone opening this link can view your progress without overriding their own tracker!
+        </p>
+        <textarea id="share-link-input" class="code-box" readonly></textarea>
+        <div style="margin-top: 12px; display: flex; gap: 8px;">
+          <button class="btn-primary" onclick="copyShareLink()">📋 Copy Share Link</button>
+        </div>
+      </div>
+
+      <!-- Tab: Discord Summary -->
+      <div id="data-sec-discord-summary" style="display: none;">
+        <p style="font-size: 0.86rem; color: var(--text-muted); margin-top: 0;">
+          Formatted Markdown summary ready to paste into Discord or chat:
+        </p>
+        <textarea id="discord-summary-input" class="code-box" rows="5" readonly></textarea>
+        <div style="margin-top: 12px;">
+          <button class="btn-primary" onclick="copyDiscordSummary()">📋 Copy Discord Message</button>
+        </div>
+      </div>
+
+      <!-- Tab: Backup & Restore -->
+      <div id="data-sec-backup-restore" style="display: none;">
+        <p style="font-size: 0.86rem; color: var(--text-muted); margin-top: 0;">
+          Export your tracker state as a JSON file or restore from a backup:
+        </p>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px;">
+          <button class="btn-cyan" onclick="exportJsonFile()">💾 Download Backup (.json)</button>
+          <button onclick="document.getElementById('import-file-input').click()">📂 Upload Backup File</button>
+          <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="importJsonFile(event)">
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 4px;">Or paste raw JSON / champion names below:</p>
+        <textarea id="raw-json-input" class="code-box" placeholder='Paste JSON or comma-separated champion names...'></textarea>
+        <div style="margin-top: 8px;">
+          <button onclick="importRawData()">Import Raw Data</button>
+        </div>
+      </div>
+
+      <!-- Tab: Reset -->
+      <div id="data-sec-reset-data" style="display: none;">
+        <p style="font-size: 0.88rem; color: #ff99a8; margin-top: 0;">
+          ⚠️ Danger: This will clear all won champions from your browser storage.
+        </p>
+        <button class="btn-danger" onclick="promptReset()">Reset All Won Champions</button>
+      </div>
+
+      <div class="modal-footer">
+        <button onclick="closeModal('share-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-backdrop" id="settings-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>⚙️ Preferences</h2>
+        <button class="modal-close" onclick="closeModal('settings-modal')">✕</button>
+      </div>
+
+      <div class="switch-row">
+        <div>
+          <div class="switch-label">Instant 1-Click Toggle</div>
+          <div class="switch-desc">Clicking a champion marks/unmarks immediately with undo toast</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="setting-quick-click" onchange="updateSetting('quickClick', this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="switch-row">
+        <div>
+          <div class="switch-label">Auto-Update DataDragon Patch</div>
+          <div class="switch-desc">Check Riot API on startup for latest champions & portraits</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="setting-auto-patch" onchange="updateSetting('autoPatch', this.checked)">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div style="margin-top: 18px; font-size: 0.8rem; color: var(--text-dim);">
+        <p><strong>Keyboard Shortcuts:</strong></p>
+        <ul style="padding-left: 20px; margin: 6px 0;">
+          <li><kbd>R</kbd> or <kbd>Space</kbd>: Roll random remaining champion</li>
+          <li><kbd>Ctrl + Z</kbd>: Undo last mark/unmark</li>
+          <li><kbd>/</kbd> or <kbd>Ctrl + K</kbd>: Focus champion search</li>
+          <li><kbd>Esc</kbd>: Close modal / clear search / context menu</li>
+        </ul>
+      </div>
+
+      <div class="modal-footer">
+        <button onclick="closeModal('settings-modal')">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="modal-backdrop" id="confirm-modal">
+    <div class="modal-box" style="max-width: 380px;">
+      <div class="modal-header">
+        <h2>Confirm Action</h2>
+        <button class="modal-close" onclick="closeModal('confirm-modal')">✕</button>
+      </div>
+      <div class="modal-body" id="confirm-modal-text">Are you sure?</div>
+      <div class="modal-footer">
+        <button id="confirm-modal-ok-btn" class="btn-primary">Confirm</button>
+        <button onclick="closeModal('confirm-modal')">Cancel</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    const VERSION = "16.16.1";
-    const COOKIE_NAME = "lol_champ_wins";
+    // --- Constants & Canonical Fallback Champions ---
+    let DATA_DRAGON_VERSION = "15.4.1";
+    const STORAGE_KEY = "arena_wins_data_v2";
+    const SETTINGS_KEY = "arena_wins_settings_v2";
+    const COOKIE_LEGACY_KEY = "lol_champ_wins";
 
-    const ALL_CHAMPIONS = [
-      "Aatrox", "Ahri", "Akali", "Akshan", "Alistar", "Ambessa", "Amumu", "Anivia", "Annie", "Aphelios", "Ashe", "Aurelion Sol", "Aurora", "Azir",
-      "Bard", "Bel'Veth", "Blitzcrank", "Brand", "Braum", "Briar", "Caitlyn", "Camille", "Cassiopeia", "Cho'Gath", "Corki", "Darius", "Diana", "Dr. Mundo", "Draven",
-      "Ekko", "Elise", "Evelynn", "Ezreal", "Fiddlesticks", "Fiora", "Fizz", "Galio", "Gangplank", "Garen", "Gnar", "Gragas", "Graves", "Gwen",
-      "Hecarim", "Heimerdinger", "Hwei", "Illaoi", "Irelia", "Ivern", "Janna", "Jarvan IV", "Jax", "Jayce", "Jhin", "Jinx",
-      "K'Sante", "Kai'Sa", "Kalista", "Karma", "Karthus", "Kassadin", "Katarina", "Kayle", "Kayn", "Kennen", "Kha'Zix", "Kindred", "Kled", "Kog'Maw",
-      "LeBlanc", "Lee Sin", "Leona", "Lillia", "Lissandra", "Locke", "Lucian", "Lulu", "Lux",
-      "Malphite", "Malzahar", "Maokai", "Master Yi", "Mel", "Milio", "Miss Fortune", "Mordekaiser", "Morgana",
-      "Naafiri", "Nami", "Nasus", "Nautilus", "Neeko", "Nidalee", "Nilah", "Nocturne", "Nunu & Willump",
-      "Olaf", "Orianna", "Ornn", "Pantheon", "Poppy", "Pyke", "Qiyana", "Quinn",
-      "Rakan", "Rammus", "Rek'Sai", "Rell", "Renata Glasc", "Renekton", "Rengar", "Riven", "Rumble", "Ryze",
-      "Samira", "Sejuani", "Senna", "Seraphine", "Sett", "Shaco", "Shen", "Shyvana", "Singed", "Sion", "Sivir", "Skarner", "Smolder", "Sona", "Soraka", "Swain", "Sylas", "Syndra",
-      "Tahm Kench", "Taliyah", "Talon", "Taric", "Teemo", "Thresh", "Tristana", "Trundle", "Tryndamere", "Twisted Fate", "Twitch",
-      "Udyr", "Urgot", "Varus", "Vayne", "Veigar", "Vel'Koz", "Vex", "Vi", "Viego", "Viktor", "Vladimir", "Volibear",
-      "Warwick", "Wukong", "Xayah", "Xerath", "Xin Zhao", "Yasuo", "Yone", "Yorick", "Yunara", "Yuumi", "Zaahen", "Zac", "Zed", "Zeri", "Ziggs", "Zilean", "Zoe", "Zyra"
+    // Canonical list guarantees URL sharing backwards & forwards compatibility
+    const CANONICAL_FALLBACK_ROSTER = [
+      { id: "Aatrox", name: "Aatrox", tags: ["Fighter", "Tank"], title: "the Darkin Blade" },
+      { id: "Ahri", name: "Ahri", tags: ["Mage", "Assassin"], title: "the Nine-Tailed Fox" },
+      { id: "Akali", name: "Akali", tags: ["Assassin"], title: "the Rogue Assassin" },
+      { id: "Akshan", name: "Akshan", tags: ["Marksman", "Assassin"], title: "the Rogue Sentinel" },
+      { id: "Alistar", name: "Alistar", tags: ["Tank", "Support"], title: "the Minotaur" },
+      { id: "Ambessa", name: "Ambessa", tags: ["Fighter", "Assassin"], title: "Matriarch of War" },
+      { id: "Amumu", name: "Amumu", tags: ["Tank", "Mage"], title: "the Sad Mummy" },
+      { id: "Anivia", name: "Anivia", tags: ["Mage", "Support"], title: "the Cryophoenix" },
+      { id: "Annie", name: "Annie", tags: ["Mage", "Support"], title: "the Dark Child" },
+      { id: "Aphelios", name: "Aphelios", tags: ["Marksman"], title: "the Weapon of the Faithful" },
+      { id: "Ashe", name: "Ashe", tags: ["Marksman", "Support"], title: "the Frost Archer" },
+      { id: "AurelionSol", name: "Aurelion Sol", tags: ["Mage"], title: "The Star Forger" },
+      { id: "Aurora", name: "Aurora", tags: ["Mage", "Assassin"], title: "the Witch Between Worlds" },
+      { id: "Azir", name: "Azir", tags: ["Mage", "Marksman"], title: "the Emperor of the Sands" },
+      { id: "Bard", name: "Bard", tags: ["Support", "Mage"], title: "the Wandering Caretaker" },
+      { id: "Belveth", name: "Bel'Veth", tags: ["Fighter"], title: "the Empress of the Void" },
+      { id: "Blitzcrank", name: "Blitzcrank", tags: ["Tank", "Support"], title: "the Great Steam Golem" },
+      { id: "Brand", name: "Brand", tags: ["Mage", "Support"], title: "the Burning Vengeance" },
+      { id: "Braum", name: "Braum", tags: ["Support", "Tank"], title: "the Heart of the Freljord" },
+      { id: "Briar", name: "Briar", tags: ["Fighter", "Assassin"], title: "the Restrained Hunger" },
+      { id: "Caitlyn", name: "Caitlyn", tags: ["Marksman"], title: "the Sheriff of Piltover" },
+      { id: "Camille", name: "Camille", tags: ["Fighter", "Tank"], title: "the Steel Shadow" },
+      { id: "Cassiopeia", name: "Cassiopeia", tags: ["Mage"], title: "the Serpent's Embrace" },
+      { id: "Chogath", name: "Cho'Gath", tags: ["Tank", "Mage"], title: "the Terror of the Void" },
+      { id: "Corki", name: "Corki", tags: ["Marksman", "Mage"], title: "the Daring Bombardier" },
+      { id: "Darius", name: "Darius", tags: ["Fighter", "Tank"], title: "the Hand of Noxus" },
+      { id: "Diana", name: "Diana", tags: ["Fighter", "Mage"], title: "Scorn of the Moon" },
+      { id: "DrMundo", name: "Dr. Mundo", tags: ["Fighter", "Tank"], title: "the Madman of Zaun" },
+      { id: "Draven", name: "Draven", tags: ["Marksman"], title: "the Glorious Executioner" },
+      { id: "Ekko", name: "Ekko", tags: ["Assassin", "Mage"], title: "the Boy Who Shattered Time" },
+      { id: "Elise", name: "Elise", tags: ["Mage", "Assassin"], title: "the Spider Queen" },
+      { id: "Evelynn", name: "Evelynn", tags: ["Assassin", "Mage"], title: "Agony's Embrace" },
+      { id: "Ezreal", name: "Ezreal", tags: ["Marksman", "Mage"], title: "the Prodigal Explorer" },
+      { id: "Fiddlesticks", name: "Fiddlesticks", tags: ["Mage", "Support"], title: "the Ancient Fear" },
+      { id: "Fiora", name: "Fiora", tags: ["Fighter", "Assassin"], title: "the Grand Duelist" },
+      { id: "Fizz", name: "Fizz", tags: ["Assassin", "Fighter"], title: "the Tidal Trickster" },
+      { id: "Galio", name: "Galio", tags: ["Tank", "Mage"], title: "the Colossus" },
+      { id: "Gangplank", name: "Gangplank", tags: ["Fighter"], title: "the Saltwater Scourge" },
+      { id: "Garen", name: "Garen", tags: ["Fighter", "Tank"], title: "The Might of Demacia" },
+      { id: "Gnar", name: "Gnar", tags: ["Fighter", "Tank"], title: "the Missing Link" },
+      { id: "Gragas", name: "Gragas", tags: ["Fighter", "Mage"], title: "the Rabble Rouser" },
+      { id: "Graves", name: "Graves", tags: ["Marksman"], title: "the Outlaw" },
+      { id: "Gwen", name: "Gwen", tags: ["Fighter", "Assassin"], title: "The Hallowed Seamstress" },
+      { id: "Hecarim", name: "Hecarim", tags: ["Fighter", "Tank"], title: "the Shadow of War" },
+      { id: "Heimerdinger", name: "Heimerdinger", tags: ["Mage", "Support"], title: "the Revered Inventor" },
+      { id: "Hwei", name: "Hwei", tags: ["Mage", "Support"], title: "the Visionary" },
+      { id: "Illaoi", name: "Illaoi", tags: ["Fighter", "Tank"], title: "the Kraken Priestess" },
+      { id: "Irelia", name: "Irelia", tags: ["Fighter", "Assassin"], title: "the Blade Dancer" },
+      { id: "Ivern", name: "Ivern", tags: ["Support", "Mage"], title: "the Green Father" },
+      { id: "Janna", name: "Janna", tags: ["Support", "Mage"], title: "the Storm's Fury" },
+      { id: "JarvanIV", name: "Jarvan IV", tags: ["Tank", "Fighter"], title: "the Exemplar of Demacia" },
+      { id: "Jax", name: "Jax", tags: ["Fighter", "Assassin"], title: "Grandmaster at Arms" },
+      { id: "Jayce", name: "Jayce", tags: ["Fighter", "Marksman"], title: "the Defender of Tomorrow" },
+      { id: "Jhin", name: "Jhin", tags: ["Marksman", "Mage"], title: "the Virtuoso" },
+      { id: "Jinx", name: "Jinx", tags: ["Marksman"], title: "the Loose Cannon" },
+      { id: "KSante", name: "K'Sante", tags: ["Tank", "Fighter"], title: "the Pride of Nazumah" },
+      { id: "Kaisa", name: "Kai'Sa", tags: ["Marksman", "Assassin"], title: "Daughter of the Void" },
+      { id: "Kalista", name: "Kalista", tags: ["Marksman"], title: "the Spear of Vengeance" },
+      { id: "Karma", name: "Karma", tags: ["Mage", "Support"], title: "the Enlightened One" },
+      { id: "Karthus", name: "Karthus", tags: ["Mage"], title: "the Deathsinger" },
+      { id: "Kassadin", name: "Kassadin", tags: ["Assassin", "Mage"], title: "the Void Walker" },
+      { id: "Katarina", name: "Katarina", tags: ["Assassin", "Mage"], title: "the Sinister Blade" },
+      { id: "Kayle", name: "Kayle", tags: ["Fighter", "Support"], title: "the Righteous" },
+      { id: "Kayn", name: "Kayn", tags: ["Fighter", "Assassin"], title: "the Shadow Reaper" },
+      { id: "Kennen", name: "Kennen", tags: ["Mage", "Marksman"], title: "the Heart of the Tempest" },
+      { id: "Khazix", name: "Kha'Zix", tags: ["Assassin"], title: "the Voidreaver" },
+      { id: "Kindred", name: "Kindred", tags: ["Marksman"], title: "The Eternal Hunters" },
+      { id: "Kled", name: "Kled", tags: ["Fighter", "Tank"], title: "the Cantankerous Cavalier" },
+      { id: "KogMaw", name: "Kog'Maw", tags: ["Marksman", "Mage"], title: "the Mouth of the Abyss" },
+      { id: "Leblanc", name: "LeBlanc", tags: ["Assassin", "Mage"], title: "the Deceiver" },
+      { id: "LeeSin", name: "Lee Sin", tags: ["Fighter", "Assassin"], title: "the Blind Monk" },
+      { id: "Leona", name: "Leona", tags: ["Tank", "Support"], title: "the Radiant Dawn" },
+      { id: "Lillia", name: "Lillia", tags: ["Fighter", "Mage"], title: "the Bashful Bloom" },
+      { id: "Lissandra", name: "Lissandra", tags: ["Mage"], title: "the Ice Witch" },
+      { id: "Lucian", name: "Lucian", tags: ["Marksman", "Assassin"], title: "the Purifier" },
+      { id: "Lulu", name: "Lulu", tags: ["Support", "Mage"], title: "the Fae Sorceress" },
+      { id: "Lux", name: "Lux", tags: ["Mage", "Support"], title: "the Lady of Luminosity" },
+      { id: "Malphite", name: "Malphite", tags: ["Tank", "Fighter"], title: "Shard of the Monolith" },
+      { id: "Malzahar", name: "Malzahar", tags: ["Mage", "Assassin"], title: "the Prophet of the Void" },
+      { id: "Maokai", name: "Maokai", tags: ["Tank", "Mage"], title: "the Twisted Treant" },
+      { id: "MasterYi", name: "Master Yi", tags: ["Assassin", "Fighter"], title: "the Wuju Bladesman" },
+      { id: "Mel", name: "Mel", tags: ["Mage", "Support"], title: "the Medarda Heir" },
+      { id: "Milio", name: "Milio", tags: ["Support", "Mage"], title: "the Gentle Flame" },
+      { id: "MissFortune", name: "Miss Fortune", tags: ["Marksman", "Mage"], title: "the Bounty Hunter" },
+      { id: "Mordekaiser", name: "Mordekaiser", tags: ["Fighter", "Mage"], title: "the Iron Revenant" },
+      { id: "Morgana", name: "Morgana", tags: ["Mage", "Support"], title: "the Fallen" },
+      { id: "Naafiri", name: "Naafiri", tags: ["Assassin", "Fighter"], title: "the Hound of a Hundred Bites" },
+      { id: "Nami", name: "Nami", tags: ["Support", "Mage"], title: "the Tidecaller" },
+      { id: "Nasus", name: "Nasus", tags: ["Fighter", "Tank"], title: "the Curator of the Sands" },
+      { id: "Nautilus", name: "Nautilus", tags: ["Tank", "Support"], title: "the Titan of the Depths" },
+      { id: "Neeko", name: "Neeko", tags: ["Mage", "Support"], title: "the Curious Chameleon" },
+      { id: "Nidalee", name: "Nidalee", tags: ["Assassin", "Mage"], title: "the Bestial Huntress" },
+      { id: "Nilah", name: "Nilah", tags: ["Fighter", "Assassin"], title: "the Joy Unbound" },
+      { id: "Nocturne", name: "Nocturne", tags: ["Assassin", "Fighter"], title: "the Eternal Nightmare" },
+      { id: "Nunu", name: "Nunu & Willump", tags: ["Tank", "Fighter"], title: "the Boy and His Yeti" },
+      { id: "Olaf", name: "Olaf", tags: ["Fighter", "Tank"], title: "the Berserker" },
+      { id: "Orianna", name: "Orianna", tags: ["Mage", "Support"], title: "the Lady of Clockwork" },
+      { id: "Ornn", name: "Ornn", tags: ["Tank", "Fighter"], title: "The Fire below the Mountain" },
+      { id: "Pantheon", name: "Pantheon", tags: ["Fighter", "Assassin"], title: "the Unbreakable Spear" },
+      { id: "Poppy", name: "Poppy", tags: ["Tank", "Fighter"], title: "Keeper of the Hammer" },
+      { id: "Pyke", name: "Pyke", tags: ["Support", "Assassin"], title: "the Bloodharbor Ripper" },
+      { id: "Qiyana", name: "Qiyana", tags: ["Assassin", "Fighter"], title: "Empress of the Elements" },
+      { id: "Quinn", name: "Quinn", tags: ["Marksman", "Assassin"], title: "Demacia's Wings" },
+      { id: "Rakan", name: "Rakan", tags: ["Support"], title: "The Charmer" },
+      { id: "Rammus", name: "Rammus", tags: ["Tank", "Fighter"], title: "the Armordillo" },
+      { id: "RekSai", name: "Rek'Sai", tags: ["Fighter", "Assassin"], title: "the Void Burrower" },
+      { id: "Rell", name: "Rell", tags: ["Tank", "Support"], title: "the Iron Maiden" },
+      { id: "Renata", name: "Renata Glasc", tags: ["Support", "Mage"], title: "the Chem-Baroness" },
+      { id: "Renekton", name: "Renekton", tags: ["Fighter", "Tank"], title: "the Butcher of the Sands" },
+      { id: "Rengar", name: "Rengar", tags: ["Assassin", "Fighter"], title: "the Pridestalker" },
+      { id: "Riven", name: "Riven", tags: ["Fighter", "Assassin"], title: "the Exile" },
+      { id: "Rumble", name: "Rumble", tags: ["Fighter", "Mage"], title: "the Mechanized Menace" },
+      { id: "Ryze", name: "Ryze", tags: ["Mage", "Fighter"], title: "the Rune Mage" },
+      { id: "Samira", name: "Samira", tags: ["Marksman", "Assassin"], title: "the Desert Rose" },
+      { id: "Sejuani", name: "Sejuani", tags: ["Tank", "Fighter"], title: "Fury of the North" },
+      { id: "Senna", name: "Senna", tags: ["Marksman", "Support"], title: "the Redeemer" },
+      { id: "Seraphine", name: "Seraphine", tags: ["Mage", "Support"], title: "the Starry-Eyed Songstress" },
+      { id: "Sett", name: "Sett", tags: ["Fighter", "Tank"], title: "the Boss" },
+      { id: "Shaco", name: "Shaco", tags: ["Assassin"], title: "the Demon Jester" },
+      { id: "Shen", name: "Shen", tags: ["Tank", "Support"], title: "the Eye of Twilight" },
+      { id: "Shyvana", name: "Shyvana", tags: ["Fighter", "Tank"], title: "the Half-Dragon" },
+      { id: "Singed", name: "Singed", tags: ["Tank", "Fighter"], title: "the Mad Chemist" },
+      { id: "Sion", name: "Sion", tags: ["Tank", "Fighter"], title: "The Undead Juggernaut" },
+      { id: "Sivir", name: "Sivir", tags: ["Marksman"], title: "the Battle Mistress" },
+      { id: "Skarner", name: "Skarner", tags: ["Tank", "Fighter"], title: "the Primordial Sovereign" },
+      { id: "Smolder", name: "Smolder", tags: ["Marksman", "Mage"], title: "the Fiery Fledgling" },
+      { id: "Sona", name: "Sona", tags: ["Support", "Mage"], title: "Maven of the Strings" },
+      { id: "Soraka", name: "Soraka", tags: ["Support", "Mage"], title: "the Starchild" },
+      { id: "Swain", name: "Swain", tags: ["Mage", "Fighter"], title: "the Noxian Grand General" },
+      { id: "Sylas", name: "Sylas", tags: ["Mage", "Assassin"], title: "the Unshackled" },
+      { id: "Syndra", name: "Syndra", tags: ["Mage"], title: "the Dark Sovereign" },
+      { id: "TahmKench", name: "Tahm Kench", tags: ["Support", "Tank"], title: "The River King" },
+      { id: "Taliyah", name: "Taliyah", tags: ["Mage", "Support"], title: "the Stoneweaver" },
+      { id: "Talon", name: "Talon", tags: ["Assassin"], title: "the Blade's Shadow" },
+      { id: "Taric", name: "Taric", tags: ["Support", "Tank"], title: "the Shield of Valoran" },
+      { id: "Teemo", name: "Teemo", tags: ["Marksman", "Mage"], title: "the Swift Scout" },
+      { id: "Thresh", name: "Thresh", tags: ["Support", "Tank"], title: "the Chain Warden" },
+      { id: "Tristana", name: "Tristana", tags: ["Marksman", "Assassin"], title: "the Yordle Gunner" },
+      { id: "Trundle", name: "Trundle", tags: ["Fighter", "Tank"], title: "the Troll King" },
+      { id: "Tryndamere", name: "Tryndamere", tags: ["Fighter", "Assassin"], title: "the Barbarian King" },
+      { id: "TwistedFate", name: "Twisted Fate", tags: ["Mage", "Marksman"], title: "the Card Master" },
+      { id: "Twitch", name: "Twitch", tags: ["Marksman", "Assassin"], title: "the Plague Rat" },
+      { id: "Udyr", name: "Udyr", tags: ["Fighter", "Tank"], title: "the Spirit Walker" },
+      { id: "Urgot", name: "Urgot", tags: ["Fighter", "Tank"], title: "the Dreadnought" },
+      { id: "Varus", name: "Varus", tags: ["Marksman", "Mage"], title: "the Arrow of Retribution" },
+      { id: "Vayne", name: "Vayne", tags: ["Marksman", "Assassin"], title: "the Night Hunter" },
+      { id: "Veigar", name: "Veigar", tags: ["Mage"], title: "the Tiny Master of Evil" },
+      { id: "Velkoz", name: "Vel'Koz", tags: ["Mage", "Support"], title: "the Eye of the Void" },
+      { id: "Vex", name: "Vex", tags: ["Mage"], title: "the Gloomist" },
+      { id: "Vi", name: "Vi", tags: ["Fighter", "Assassin"], title: "the Piltover Enforcer" },
+      { id: "Viego", name: "Viego", tags: ["Assassin", "Fighter"], title: "The Ruined King" },
+      { id: "Viktor", name: "Viktor", tags: ["Mage"], title: "the Machine Herald" },
+      { id: "Vladimir", name: "Vladimir", tags: ["Mage", "Tank"], title: "the Crimson Reaper" },
+      { id: "Volibear", name: "Volibear", tags: ["Fighter", "Tank"], title: "the Relentless Storm" },
+      { id: "Warwick", name: "Warwick", tags: ["Fighter", "Tank"], title: "the Uncaged Wrath of Zaun" },
+      { id: "MonkeyKing", name: "Wukong", tags: ["Fighter", "Tank"], title: "the Monkey King" },
+      { id: "Xayah", name: "Xayah", tags: ["Marksman"], title: "the Rebel" },
+      { id: "Xerath", name: "Xerath", tags: ["Mage", "Support"], title: "the Magus Ascendant" },
+      { id: "XinZhao", name: "Xin Zhao", tags: ["Fighter", "Assassin"], title: "the Seneschal of Demacia" },
+      { id: "Yasuo", name: "Yasuo", tags: ["Fighter", "Assassin"], title: "the Unforgiven" },
+      { id: "Yone", name: "Yone", tags: ["Assassin", "Fighter"], title: "the Unforgotten" },
+      { id: "Yorick", name: "Yorick", tags: ["Fighter", "Tank"], title: "Shepherd of Souls" },
+      { id: "Yuumi", name: "Yuumi", tags: ["Support", "Mage"], title: "the Magical Cat" },
+      { id: "Zac", name: "Zac", tags: ["Tank", "Fighter"], title: "the Secret Weapon" },
+      { id: "Zed", name: "Zed", tags: ["Assassin"], title: "the Master of Shadows" },
+      { id: "Zeri", name: "Zeri", tags: ["Marksman"], title: "The Spark of Zaun" },
+      { id: "Ziggs", name: "Ziggs", tags: ["Mage"], title: "the Hexplosives Expert" },
+      { id: "Zilean", name: "Zilean", tags: ["Support", "Mage"], title: "the Chronokeeper" },
+      { id: "Zoe", name: "Zoe", tags: ["Mage", "Support"], title: "the Aspect of Twilight" },
+      { id: "Zyra", name: "Zyra", tags: ["Mage", "Support"], title: "Rise of the Thorns" }
     ];
 
-    const SPECIAL_MAP = {
-      "Wukong": "MonkeyKing",
-      "Nunu & Willump": "Nunu",
-      "Renata Glasc": "Renata",
-      "Dr. Mundo": "DrMundo",
-      "Jarvan IV": "JarvanIV",
-      "Master Yi": "MasterYi",
-      "Miss Fortune": "MissFortune",
-      "Tahm Kench": "TahmKench",
-      "Twisted Fate": "TwistedFate",
-      "Xin Zhao": "XinZhao",
-      "K'Sante": "KSante",
-      "Cho'Gath": "Chogath",
-      "Kai'Sa": "Kaisa",
-      "Kha'Zix": "Khazix",
-      "LeBlanc": "Leblanc",
-      "Vel'Koz": "Velkoz",
-      "Bel'Veth": "Belveth"
+    // Search aliases for quick typing
+    const SEARCH_ALIASES = {
+      "mf": "Miss Fortune",
+      "gp": "Gangplank",
+      "asol": "Aurelion Sol",
+      "sol": "Aurelion Sol",
+      "ww": "Warwick",
+      "tk": "Tahm Kench",
+      "tf": "Twisted Fate",
+      "yi": "Master Yi",
+      "mundo": "Dr. Mundo",
+      "drmundo": "Dr. Mundo",
+      "lb": "LeBlanc",
+      "j4": "Jarvan IV",
+      "noc": "Nocturne",
+      "xin": "Xin Zhao",
+      "kz": "Kha'Zix",
+      "khazix": "Kha'Zix",
+      "cho": "Cho'Gath",
+      "chogath": "Cho'Gath",
+      "kog": "Kog'Maw",
+      "kogmaw": "Kog'Maw",
+      "rek": "Rek'Sai",
+      "reksai": "Rek'Sai",
+      "nunu": "Nunu & Willump",
+      "willump": "Nunu & Willump",
+      "ksante": "K'Sante",
+      "morde": "Mordekaiser",
+      "renata": "Renata Glasc",
+      "fiddle": "Fiddlesticks",
+      "cass": "Cassiopeia",
+      "cassio": "Cassiopeia",
+      "heca": "Hecarim",
+      "heimer": "Heimerdinger",
+      "ez": "Ezreal",
+      "blitz": "Blitzcrank",
+      "ali": "Alistar",
+      "eve": "Evelynn",
+      "amumu": "Amumu",
+      "trist": "Tristana",
+      "trynd": "Tryndamere",
+      "vlad": "Vladimir",
+      "voli": "Volibear"
     };
 
-    const METASRC_SLUG_MAP = {
-      "Nunu & Willump": "nunu",
-      "Jarvan IV": "jarvan",
-      "K'Sante": "ksante",
-      "Kai'Sa": "kaisa",
-      "Kha'Zix": "khazix",
-      "Cho'Gath": "chogath",
-      "Vel'Koz": "velkoz",
-      "Bel'Veth": "belveth",
-      "Dr. Mundo": "dr-mundo",
-      "Renata Glasc": "renata-glasc"
-    };
-
-    let champions = {};
+    // --- State Variables ---
+    let champions = {};              // { [champName]: boolean }
+    let championRoster = [...CANONICAL_FALLBACK_ROSTER];
     let historyStack = [];
-    let currentTab = "remaining";
-    let modalCallback = null;
-    let selectedContextMenuChamp = null;
+    let currentTab = "remaining";    // 'remaining' | 'completed' | 'all'
+    let currentRole = "all";         // 'all' | 'Fighter' | 'Tank' | 'Mage' | 'Assassin' | 'Marksman' | 'Support'
+    let searchQuery = "";
     let isSharedMode = false;
+    let selectedContextMenuChamp = null;
+    let rouletteSelectedChamp = null;
+    let rouletteInterval = null;
 
-    // --- Bitfield / Base64 Sharing Utilities ---
+    let settings = {
+      quickClick: true,
+      autoPatch: true
+    };
+
+    // --- DataDragon Dynamic Loader ---
+    async function loadDataDragonRoster() {
+      if (!settings.autoPatch) return;
+
+      try {
+        const verRes = await fetch("https://ddragon.leagueoflegends.com/api/versions.json");
+        if (!verRes.ok) return;
+        const versions = await verRes.json();
+        if (versions && versions.length > 0) {
+          DATA_DRAGON_VERSION = versions[0];
+          document.getElementById("patch-indicator").innerText = `Patch ${DATA_DRAGON_VERSION} • Arena God Challenge`;
+        }
+
+        const champRes = await fetch(`https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/data/en_US/champion.json`);
+        if (!champRes.ok) return;
+        const champData = await champRes.json();
+        
+        if (champData && champData.data) {
+          const fetchedList = [];
+          const seen = new Set();
+
+          // Merge fetched champions
+          Object.values(champData.data).forEach(c => {
+            fetchedList.push({
+              id: c.id,
+              name: c.name,
+              tags: c.tags || [],
+              title: c.title || ""
+            });
+            seen.add(c.name);
+          });
+
+          // Keep any fallback roster entries not in dynamic fetch
+          CANONICAL_FALLBACK_ROSTER.forEach(c => {
+            if (!seen.has(c.name)) {
+              fetchedList.push(c);
+              seen.add(c.name);
+            }
+          });
+
+          // Sort alphabetically
+          fetchedList.sort((a, b) => a.name.localeCompare(b.name));
+          championRoster = fetchedList;
+
+          // Ensure state object has all keys
+          championRoster.forEach(c => {
+            if (champions[c.name] === undefined) {
+              champions[c.name] = false;
+            }
+          });
+
+          renderGrid();
+          updateProgressBars();
+        }
+      } catch (err) {
+        console.warn("Using offline fallback champion roster:", err);
+      }
+    }
+
+    // --- Storage & Migration ---
+    function loadSettings() {
+      try {
+        const saved = localStorage.getItem(SETTINGS_KEY);
+        if (saved) {
+          settings = { ...settings, ...JSON.parse(saved) };
+        }
+      } catch (e) {}
+      document.getElementById("setting-quick-click").checked = settings.quickClick;
+      document.getElementById("setting-auto-patch").checked = settings.autoPatch;
+    }
+
+    function saveSettings() {
+      try {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+      } catch (e) {}
+    }
+
+    function updateSetting(key, val) {
+      settings[key] = val;
+      saveSettings();
+      if (key === "autoPatch" && val) {
+        loadDataDragonRoster();
+      }
+    }
+
+    function saveState() {
+      if (isSharedMode) return;
+      try {
+        const wonList = championRoster.filter(c => champions[c.name]).map(c => c.name);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(wonList));
+      } catch (e) {}
+    }
+
+    function loadState() {
+      // Initialize map
+      championRoster.forEach(c => champions[c.name] = false);
+
+      // 1. Try modern localStorage
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const list = JSON.parse(saved);
+          if (Array.isArray(list)) {
+            list.forEach(name => {
+              champions[name] = true;
+            });
+            return;
+          }
+        }
+      } catch (e) {}
+
+      // 2. Fallback: migrate from legacy cookie
+      try {
+        const cookieVal = getCookie(COOKIE_LEGACY_KEY);
+        if (cookieVal) {
+          const list = JSON.parse(cookieVal);
+          if (Array.isArray(list)) {
+            list.forEach(name => {
+              champions[name] = true;
+            });
+            saveState(); // Migrate to localStorage
+          }
+        }
+      } catch (e) {}
+    }
+
+    function getCookie(name) {
+      const cname = name + "=";
+      const decodedCookie = decodeURIComponent(document.cookie);
+      const ca = decodedCookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i].trim();
+        if (c.indexOf(cname) === 0) return c.substring(cname.length, c.length);
+      }
+      return "";
+    }
+
+    // --- URL Safe Base64 Bitfield Share Utility ---
     function encodeProgressToBase64() {
-      const numBytes = Math.ceil(ALL_CHAMPIONS.length / 8);
+      const numBytes = Math.ceil(CANONICAL_FALLBACK_ROSTER.length / 8);
       const byteArray = new Uint8Array(numBytes);
 
-      ALL_CHAMPIONS.forEach((champ, idx) => {
-        if (champions[champ]) {
+      CANONICAL_FALLBACK_ROSTER.forEach((champ, idx) => {
+        if (champions[champ.name]) {
           const byteIdx = Math.floor(idx / 8);
           const bitIdx = idx % 8;
           byteArray[byteIdx] |= (1 << bitIdx);
@@ -488,10 +1659,12 @@
         }
 
         const decoded = {};
-        ALL_CHAMPIONS.forEach((champ, idx) => {
+        championRoster.forEach(c => decoded[c.name] = false);
+
+        CANONICAL_FALLBACK_ROSTER.forEach((champ, idx) => {
           const byteIdx = Math.floor(idx / 8);
           const bitIdx = idx % 8;
-          decoded[champ] = byteIdx < byteArray.length ? Boolean(byteArray[byteIdx] & (1 << bitIdx)) : false;
+          decoded[champ.name] = byteIdx < byteArray.length ? Boolean(byteArray[byteIdx] & (1 << bitIdx)) : false;
         });
         return decoded;
       } catch (e) {
@@ -500,145 +1673,141 @@
       }
     }
 
-    function shareProgress() {
-      const code = encodeProgressToBase64();
-      const shareUrl = `${window.location.origin}${window.location.pathname}?share=${code}`;
-      
-      navigator.clipboard.writeText(shareUrl).then(() => {
-        showToast("Share link copied to clipboard!");
-      }).catch(() => {
-        prompt("Copy your share link:", shareUrl);
-      });
+    // --- Image & Guide URLs ---
+    function getImgUrl(champObj) {
+      return `https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/img/champion/${champObj.id}.png`;
     }
 
-    function showToast(msg) {
-      const toast = document.getElementById("toast");
-      toast.innerText = msg;
-      toast.style.display = "block";
-      setTimeout(() => toast.style.display = "none", 3000);
-    }
+    function getGuideUrl(champName, site) {
+      const slug = champName.toLowerCase().replace(/['.]/g, "").replace(/\s+/g, "-");
+      const cleanSimple = champName.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-    // --- Cookie Utilities ---
-    function setCookie(name, value, days = 365) {
-      const d = new Date();
-      d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
-      const expires = "expires=" + d.toUTCString();
-      document.cookie = `${name}=${encodeURIComponent(value)};${expires};path=/;SameSite=Strict`;
-    }
-
-    function getCookie(name) {
-      const cname = name + "=";
-      const decodedCookie = decodeURIComponent(document.cookie);
-      const ca = decodedCookie.split(';');
-      for (let i = 0; i < ca.length; i++) {
-        let c = ca[i].trim();
-        if (c.indexOf(cname) === 0) {
-          return c.substring(cname.length, c.length);
-        }
+      if (site === "metasrc") {
+        return `https://www.metasrc.com/lol/arena/champions/${slug}/build`;
+      } else if (site === "ugg") {
+        return `https://u.gg/lol/champions/${cleanSimple}/arena-build`;
+      } else if (site === "lolalytics") {
+        return `https://lolalytics.com/lol/${cleanSimple}/arena/build/`;
       }
-      return "";
+      return `https://www.google.com/search?q=${encodeURIComponent("League Arena build " + champName)}`;
     }
 
-    function saveToCookie() {
-      if (isSharedMode) return; // Prevent overwriting cookies in view-only mode
-      const completedList = ALL_CHAMPIONS.filter(c => champions[c]);
-      setCookie(COOKIE_NAME, JSON.stringify(completedList));
+    // --- Gamification & Tier Calculations ---
+    function getArenaTier(wonCount) {
+      if (wonCount >= 168) return { label: "Grandmaster Arena", class: "tier-arenagod", icon: "✨" };
+      if (wonCount >= 60) return { label: "Arena God", class: "tier-arenagod", icon: "👑" };
+      if (wonCount >= 50) return { label: "Diamond Arena", class: "tier-diamond", icon: "💎" };
+      if (wonCount >= 40) return { label: "Platinum Arena", class: "tier-platinum", icon: "🛡️" };
+      if (wonCount >= 30) return { label: "Gold Arena", class: "tier-gold", icon: "🥇" };
+      if (wonCount >= 20) return { label: "Silver Arena", class: "tier-silver", icon: "🥈" };
+      if (wonCount >= 10) return { label: "Bronze Arena", class: "tier-bronze", icon: "🥉" };
+      return { label: "Iron Arena", class: "tier-iron", icon: "⚔️" };
     }
 
-    function loadFromCookie() {
-      ALL_CHAMPIONS.forEach(c => champions[c] = false);
-      const cookieData = getCookie(COOKIE_NAME);
-      if (cookieData) {
-        try {
-          const completedList = JSON.parse(cookieData);
-          completedList.forEach(c => {
-            if (champions.hasOwnProperty(c)) {
-              champions[c] = true;
-            }
-          });
-        } catch (e) {
-          console.error("Failed to parse cookie data:", e);
-        }
-      }
-    }
+    function updateProgressBars() {
+      const wonCount = championRoster.filter(c => champions[c.name]).length;
+      const totalCount = championRoster.length;
+      const remCount = totalCount - wonCount;
 
-    function importSharedProgress() {
-      isSharedMode = false;
-      saveToCookie();
-      document.getElementById("shared-banner").style.display = "none";
-      window.history.replaceState({}, document.title, window.location.pathname);
-      showToast("Progress imported to your tracker!");
-      renderGrid();
-    }
+      // Arena God 60 Wins
+      const arenaGodCap = 60;
+      const arenaGodPct = Math.min(100, Math.round((wonCount / arenaGodCap) * 100));
+      document.getElementById("arena-god-val").innerText = wonCount;
+      document.getElementById("arena-god-pct").innerText = `${arenaGodPct}%`;
+      document.getElementById("arena-god-fill").style.width = `${Math.min(100, (wonCount / arenaGodCap) * 100)}%`;
 
-    function exitSharedMode() {
-      isSharedMode = false;
-      document.getElementById("shared-banner").style.display = "none";
-      window.history.replaceState({}, document.title, window.location.pathname);
-      loadFromCookie();
-      renderGrid();
-    }
+      const tier = getArenaTier(wonCount);
+      const tierBadge = document.getElementById("arena-tier-badge");
+      tierBadge.className = `tier-badge ${tier.class}`;
+      tierBadge.innerHTML = `${tier.icon} ${tier.label}`;
 
-    // --- Image & URL Utilities ---
-    function getDDragonId(name) {
-      if (SPECIAL_MAP[name]) return SPECIAL_MAP[name];
-      return name.replace(/[^a-zA-Z0-9]/g, "");
-    }
+      // Total Roster
+      const rosterPct = Math.round((wonCount / totalCount) * 100) || 0;
+      document.getElementById("won-count-val").innerText = wonCount;
+      document.getElementById("rem-count-val").innerText = remCount;
+      document.getElementById("total-count-val").innerText = totalCount;
+      document.getElementById("roster-fill").style.width = `${rosterPct}%`;
 
-    function getImgUrl(name) {
-      const cid = getDDragonId(name);
-      return `https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/champion/${cid}.png`;
-    }
+      // Tab count badges
+      document.getElementById("tab-rem-cnt").innerText = remCount;
+      document.getElementById("tab-comp-cnt").innerText = wonCount;
+      document.getElementById("tab-all-cnt").innerText = totalCount;
 
-    function getMetaSrcUrl(name) {
-      let slug = METASRC_SLUG_MAP[name];
-      if (!slug) {
-        slug = name.toLowerCase().replace(/['.]/g, "").replace(/\s+/g, "-");
-      }
-      return `https://www.metasrc.com/lol/arena/champions/${slug}/build`;
-    }
-
-    // --- Rendering ---
-    function renderGrid() {
-      const content = document.getElementById("content-area");
-      const search = document.getElementById("search-input").value.toLowerCase();
-
-      let filtered = ALL_CHAMPIONS.filter(c => c.toLowerCase().includes(search));
-
-      if (currentTab === "remaining") filtered = filtered.filter(c => !champions[c]);
-      if (currentTab === "completed") filtered = filtered.filter(c => champions[c]);
-
-      const wonCount = ALL_CHAMPIONS.filter(c => champions[c]).length;
-      const remCount = ALL_CHAMPIONS.length - wonCount;
-
-      document.getElementById("stats").innerText = `Won: ${wonCount} | Remaining: ${remCount} | Total: ${ALL_CHAMPIONS.length}`;
+      // Header controls state
       document.getElementById("undo-btn").disabled = historyStack.length === 0 || isSharedMode;
-      document.getElementById("reset-btn").disabled = isSharedMode;
+    }
+
+    // --- Grid Rendering ---
+    function renderGrid() {
+      const grid = document.getElementById("champ-grid");
+      const search = searchQuery.trim().toLowerCase();
+
+      // Check alias mapping
+      let resolvedSearch = search;
+      if (SEARCH_ALIASES[search]) {
+        resolvedSearch = SEARCH_ALIASES[search].toLowerCase();
+      }
+
+      let filtered = championRoster.filter(c => {
+        // Tab filter
+        const isWon = champions[c.name];
+        if (currentTab === "remaining" && isWon) return false;
+        if (currentTab === "completed" && !isWon) return false;
+
+        // Role filter
+        if (currentRole !== "all" && !c.tags.includes(currentRole)) return false;
+
+        // Search filter
+        if (resolvedSearch) {
+          const matchName = c.name.toLowerCase().includes(resolvedSearch);
+          const matchTitle = c.title && c.title.toLowerCase().includes(resolvedSearch);
+          const matchId = c.id.toLowerCase().includes(resolvedSearch);
+          if (!matchName && !matchTitle && !matchId) return false;
+        }
+
+        return true;
+      });
 
       if (filtered.length === 0) {
-        content.innerHTML = `<p style="text-align:center; color: var(--text-muted); margin-top: 40px;">No champions found.</p>`;
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <h3>No Champions Found</h3>
+            <p>Try adjusting your search query, role filter, or status tab.</p>
+          </div>
+        `;
         return;
       }
 
-      let gridHTML = `<div class="grid">`;
-      filtered.forEach(champ => {
-        const isWon = champions[champ];
-        gridHTML += `
+      let html = "";
+      filtered.forEach(c => {
+        const isWon = champions[c.name];
+        const primaryTag = c.tags && c.tags.length ? c.tags[0] : "";
+
+        html += `
           <div class="champ-card ${isWon ? 'completed' : ''}" 
-               onclick="promptToggle('${champ}')" 
-               oncontextmenu="openContextMenu(event, '${champ}')">
-            <div class="img-wrapper">
-              <img src="${getImgUrl(champ)}" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'70\\' height=\\'70\\'><rect width=\\'70\\' height=\\'70\\' fill=\\'%23152535\\'/></svg>';">
-              <div class="badge">✓</div>
+               data-champ="${c.name}"
+               onclick="handleCardClick('${c.name}')" 
+               oncontextmenu="openContextMenu(event, '${c.name}')">
+            <div class="portrait-wrap">
+              <img class="portrait-img" 
+                   src="${getImgUrl(c)}" 
+                   alt="${c.name}" 
+                   loading="lazy" 
+                   onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'70\\' height=\\'70\\'><rect width=\\'70\\' height=\\'70\\' fill=\\'%230e1a26\\'/></svg>';">
+              <div class="win-overlay">
+                <div class="win-badge">✓</div>
+              </div>
             </div>
-            <div class="champ-name">${champ}</div>
+            <div class="champ-name" title="${c.name} - ${c.title || ''}">${c.name}</div>
+            <div class="champ-role-tag">${primaryTag}</div>
           </div>
         `;
       });
-      gridHTML += `</div>`;
-      content.innerHTML = gridHTML;
+
+      grid.innerHTML = html;
     }
 
+    // --- Tab & Role Filters ---
     function switchTab(tab, btn) {
       currentTab = tab;
       document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -646,17 +1815,115 @@
       renderGrid();
     }
 
+    function switchRole(role, btn) {
+      currentRole = role;
+      document.querySelectorAll(".role-pill").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderGrid();
+    }
+
+    function handleSearchInput() {
+      const input = document.getElementById("search-input");
+      searchQuery = input.value;
+      document.getElementById("search-clear").style.display = searchQuery ? "block" : "none";
+      renderGrid();
+    }
+
+    function clearSearch() {
+      const input = document.getElementById("search-input");
+      input.value = "";
+      searchQuery = "";
+      document.getElementById("search-clear").style.display = "none";
+      renderGrid();
+      input.focus();
+    }
+
+    // --- Card Click & Toggle Handlers ---
+    function handleCardClick(champName) {
+      if (isSharedMode) {
+        showToast("Exit shared view to edit status!", null);
+        return;
+      }
+
+      if (settings.quickClick) {
+        toggleChampionWon(champName);
+      } else {
+        const isWon = champions[champName];
+        const action = isWon ? "unmark (set as Remaining)" : "mark as COMPLETED";
+        openConfirmModal(`Are you sure you want to ${action} ${champName}?`, () => {
+          toggleChampionWon(champName);
+        });
+      }
+    }
+
+    function toggleChampionWon(champName) {
+      const prev = champions[champName];
+      historyStack.push({ champ: champName, prev: prev });
+      champions[champName] = !prev;
+
+      saveState();
+      updateProgressBars();
+      renderGrid();
+
+      const actionText = !prev ? "Marked as Won" : "Set as Remaining";
+      showToast(`${champName} ${actionText}`, () => undoAction());
+    }
+
+    function undoAction() {
+      if (historyStack.length === 0 || isSharedMode) return;
+      const last = historyStack.pop();
+      champions[last.champ] = last.prev;
+      saveState();
+      updateProgressBars();
+      renderGrid();
+      showToast(`Reverted ${last.champ}`, null);
+    }
+
+    // --- Toast Notifications ---
+    function showToast(message, undoCallback) {
+      const container = document.getElementById("toast-container");
+      const toast = document.createElement("div");
+      toast.className = "toast";
+
+      let html = `<span>${message}</span>`;
+      if (undoCallback) {
+        html += `<button class="toast-undo-btn" id="toast-undo">Undo</button>`;
+      }
+      toast.innerHTML = html;
+
+      if (undoCallback) {
+        toast.querySelector("#toast-undo").onclick = () => {
+          undoCallback();
+          toast.remove();
+        };
+      }
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+        toast.style.opacity = "0";
+        toast.style.transform = "translateX(50px)";
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
     // --- Context Menu Handlers ---
-    function openContextMenu(e, champ) {
+    function openContextMenu(e, champName) {
       e.preventDefault();
-      selectedContextMenuChamp = champ;
+      selectedContextMenuChamp = champName;
       const menu = document.getElementById("context-menu");
-      const isWon = champions[champ];
+      const isWon = champions[champName];
 
-      document.getElementById("cm-toggle").innerText = isWon ? "Set as Remaining" : "Set as Completed";
+      document.getElementById("cm-champ-name").innerText = champName;
+      document.getElementById("cm-toggle").innerText = isWon ? "↩️ Set as Remaining" : "✓ Mark as Completed";
 
-      menu.style.left = `${e.clientX}px`;
-      menu.style.top = `${e.clientY}px`;
+      // Position correctly within viewport
+      const x = Math.min(e.clientX, window.innerWidth - 220);
+      const y = Math.min(e.clientY, window.innerHeight - 200);
+
+      menu.style.left = `${x}px`;
+      menu.style.top = `${y}px`;
       menu.style.display = "block";
     }
 
@@ -667,80 +1934,315 @@
 
     function handleContextMenuToggle() {
       if (selectedContextMenuChamp) {
-        if (isSharedMode) {
-          showToast("Exit shared view to edit status!");
-          hideContextMenu();
-          return;
-        }
-        const champ = selectedContextMenuChamp;
-        historyStack.push({ champ, prev: champions[champ] });
-        champions[champ] = !champions[champ];
-        saveToCookie();
-        renderGrid();
+        toggleChampionWon(selectedContextMenuChamp);
       }
       hideContextMenu();
     }
 
-    function handleContextMenuOpenGuide() {
+    function handleContextMenuOpenGuide(site) {
       if (selectedContextMenuChamp) {
-        const url = getMetaSrcUrl(selectedContextMenuChamp);
+        const url = getGuideUrl(selectedContextMenuChamp, site);
         window.open(url, "_blank");
       }
       hideContextMenu();
     }
 
-    document.addEventListener("click", hideContextMenu);
+    function handleContextMenuCopyName() {
+      if (selectedContextMenuChamp) {
+        navigator.clipboard.writeText(selectedContextMenuChamp);
+        showToast(`Copied "${selectedContextMenuChamp}" to clipboard`, null);
+      }
+      hideContextMenu();
+    }
 
-    // --- Actions & Modals ---
-    function promptToggle(champ) {
-      if (isSharedMode) {
-        showToast("Exit shared view to edit status!");
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest("#context-menu")) {
+        hideContextMenu();
+      }
+    });
+
+    // --- Roulette / Random Champion Picker ---
+    function openRouletteModal() {
+      document.getElementById("roulette-modal").style.display = "flex";
+      spinRoulette();
+    }
+
+    function spinRoulette() {
+      // Get pool of remaining champions (respecting role filter if selected)
+      let pool = championRoster.filter(c => !champions[c.name]);
+      if (currentRole !== "all") {
+        const rolePool = pool.filter(c => c.tags.includes(currentRole));
+        if (rolePool.length > 0) pool = rolePool;
+      }
+
+      if (pool.length === 0) {
+        document.getElementById("roulette-name").innerText = "🎉 All Champions Won!";
+        document.getElementById("roulette-subtitle").innerText = "You have conquered the Arena roster!";
+        document.getElementById("roulette-mark-btn").style.display = "none";
         return;
       }
-      const isWon = champions[champ];
-      const action = isWon ? "unmark (set as Remaining)" : "mark as COMPLETED";
-      document.getElementById("modal-text").innerText = `Are you sure you want to ${action} ${champ}?`;
-      modalCallback = () => {
-        historyStack.push({ champ, prev: champions[champ] });
-        champions[champ] = !champions[champ];
-        saveToCookie();
-        renderGrid();
+
+      document.getElementById("roulette-mark-btn").style.display = "inline-flex";
+
+      let counter = 0;
+      const totalTicks = 18;
+      clearInterval(rouletteInterval);
+
+      rouletteInterval = setInterval(() => {
+        const randomIdx = Math.floor(Math.random() * pool.length);
+        const champ = pool[randomIdx];
+        rouletteSelectedChamp = champ;
+
+        document.getElementById("roulette-img").src = getImgUrl(champ);
+        document.getElementById("roulette-name").innerText = champ.name;
+        document.getElementById("roulette-subtitle").innerText = champ.title || champ.tags.join(" • ");
+
+        counter++;
+        if (counter >= totalTicks) {
+          clearInterval(rouletteInterval);
+        }
+      }, 70);
+    }
+
+    function handleRouletteMarkWon() {
+      if (rouletteSelectedChamp) {
+        toggleChampionWon(rouletteSelectedChamp.name);
+        closeModal("roulette-modal");
+      }
+    }
+
+    function handleRouletteOpenGuide(site) {
+      if (rouletteSelectedChamp) {
+        const url = getGuideUrl(rouletteSelectedChamp.name, site);
+        window.open(url, "_blank");
+      }
+    }
+
+    // --- Modals & Share System ---
+    function openModal(modalId) {
+      document.getElementById(modalId).style.display = "flex";
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = "none";
+      clearInterval(rouletteInterval);
+    }
+
+    let confirmCallback = null;
+    function openConfirmModal(message, callback) {
+      document.getElementById("confirm-modal-text").innerText = message;
+      confirmCallback = callback;
+      document.getElementById("confirm-modal-ok-btn").onclick = () => {
+        if (confirmCallback) confirmCallback();
+        closeModal("confirm-modal");
       };
-      document.getElementById("modal").style.display = "flex";
+      openModal("confirm-modal");
+    }
+
+    function openSettingsModal() {
+      openModal("settings-modal");
+    }
+
+    function openShareModal() {
+      // 1. Generate share link
+      const code = encodeProgressToBase64();
+      const shareUrl = `${window.location.origin}${window.location.pathname}?share=${code}`;
+      document.getElementById("share-link-input").value = shareUrl;
+
+      // 2. Generate Discord summary
+      const wonList = championRoster.filter(c => champions[c.name]).map(c => c.name);
+      const wonCount = wonList.length;
+      const totalCount = championRoster.length;
+      const tier = getArenaTier(wonCount);
+
+      const discordSummary = `🏆 **League Arena Win Progress**: ${wonCount} / 60 (${Math.min(100, Math.round(wonCount / 60 * 100))}%) [${tier.icon} ${tier.label}]\n🌟 **Total Roster**: ${wonCount} / ${totalCount} Champions Won\n🔗 **View Tracker**: ${shareUrl}`;
+      document.getElementById("discord-summary-input").value = discordSummary;
+
+      openModal("share-modal");
+    }
+
+    function switchDataTab(tabId, btn) {
+      document.querySelectorAll(".data-tab-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      document.getElementById("data-sec-share-link").style.display = tabId === "share-link" ? "block" : "none";
+      document.getElementById("data-sec-discord-summary").style.display = tabId === "discord-summary" ? "block" : "none";
+      document.getElementById("data-sec-backup-restore").style.display = tabId === "backup-restore" ? "block" : "none";
+      document.getElementById("data-sec-reset-data").style.display = tabId === "reset-data" ? "block" : "none";
+    }
+
+    function copyShareLink() {
+      const input = document.getElementById("share-link-input");
+      input.select();
+      navigator.clipboard.writeText(input.value).then(() => {
+        showToast("Share link copied to clipboard!", null);
+      });
+    }
+
+    function copyDiscordSummary() {
+      const input = document.getElementById("discord-summary-input");
+      input.select();
+      navigator.clipboard.writeText(input.value).then(() => {
+        showToast("Discord summary copied to clipboard!", null);
+      });
+    }
+
+    function exportJsonFile() {
+      const wonList = championRoster.filter(c => champions[c.name]).map(c => c.name);
+      const data = {
+        app: "ArenaWinTracker",
+        version: DATA_DRAGON_VERSION,
+        timestamp: new Date().toISOString(),
+        wonCount: wonList.length,
+        wonChampions: wonList
+      };
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `arena-wins-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("Backup file downloaded!", null);
+    }
+
+    function importJsonFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const parsed = JSON.parse(event.target.result);
+          applyImportedList(parsed.wonChampions || parsed);
+        } catch (err) {
+          showToast("Failed to parse JSON backup file.", null);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function importRawData() {
+      const raw = document.getElementById("raw-json-input").value.trim();
+      if (!raw) return;
+
+      try {
+        if (raw.startsWith("[") || raw.startsWith("{")) {
+          const parsed = JSON.parse(raw);
+          applyImportedList(parsed.wonChampions || parsed);
+        } else {
+          // Comma or newline separated
+          const names = raw.split(/[,\n]+/).map(s => s.trim()).filter(Boolean);
+          applyImportedList(names);
+        }
+      } catch (err) {
+        showToast("Invalid format. Please check your data.", null);
+      }
+    }
+
+    function applyImportedList(list) {
+      if (!Array.isArray(list)) {
+        showToast("Import error: expected an array of champion names.", null);
+        return;
+      }
+
+      historyStack = [];
+      championRoster.forEach(c => champions[c.name] = false);
+
+      let count = 0;
+      list.forEach(item => {
+        const name = typeof item === "string" ? item : item.name;
+        if (champions[name] !== undefined) {
+          champions[name] = true;
+          count++;
+        }
+      });
+
+      saveState();
+      updateProgressBars();
+      renderGrid();
+      closeModal("share-modal");
+      showToast(`Imported ${count} champions!`, null);
     }
 
     function promptReset() {
-      if (isSharedMode) return;
-      document.getElementById("modal-text").innerText = "Are you sure you want to RESET all progress? This will clear all completed champions.";
-      modalCallback = () => {
-        ALL_CHAMPIONS.forEach(c => champions[c] = false);
+      openConfirmModal("Are you sure you want to RESET all progress? This will clear all completed champions.", () => {
+        championRoster.forEach(c => champions[c.name] = false);
         historyStack = [];
-        saveToCookie();
+        saveState();
+        updateProgressBars();
         renderGrid();
-      };
-      document.getElementById("modal").style.display = "flex";
+        closeModal("share-modal");
+        showToast("All progress reset.", null);
+      });
     }
 
-    function executeModalAction() {
-      if (modalCallback) modalCallback();
-      closeModal();
-    }
-
-    function closeModal() {
-      modalCallback = null;
-      document.getElementById("modal").style.display = "none";
-    }
-
-    function undoAction() {
-      if (historyStack.length === 0 || isSharedMode) return;
-      const last = historyStack.pop();
-      champions[last.champ] = last.prev;
-      saveToCookie();
+    // --- Shared Mode Handler ---
+    function importSharedProgress() {
+      isSharedMode = false;
+      saveState();
+      document.getElementById("shared-banner").style.display = "none";
+      window.history.replaceState({}, document.title, window.location.pathname);
+      showToast("Progress imported to your tracker!", null);
+      updateProgressBars();
       renderGrid();
     }
 
-    // --- Init Handler ---
-    function init() {
+    function exitSharedMode() {
+      isSharedMode = false;
+      document.getElementById("shared-banner").style.display = "none";
+      window.history.replaceState({}, document.title, window.location.pathname);
+      loadState();
+      updateProgressBars();
+      renderGrid();
+    }
+
+    // --- Global Keyboard Shortcuts ---
+    document.addEventListener("keydown", (e) => {
+      // Don't trigger hotkeys if typing in input/textarea
+      const isInput = ["INPUT", "TEXTAREA"].includes(document.activeElement.tagName);
+
+      if (e.key === "Escape") {
+        document.querySelectorAll(".modal-backdrop").forEach(m => m.style.display = "none");
+        hideContextMenu();
+        if (isInput) document.activeElement.blur();
+        return;
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        undoAction();
+        return;
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        document.getElementById("search-input").focus();
+        return;
+      }
+
+      if (e.key === "/" && !isInput) {
+        e.preventDefault();
+        document.getElementById("search-input").focus();
+        return;
+      }
+
+      if ((e.key === " " || e.key.toLowerCase() === "r") && !isInput) {
+        e.preventDefault();
+        const rouletteModal = document.getElementById("roulette-modal");
+        if (rouletteModal.style.display === "flex") {
+          spinRoulette();
+        } else {
+          openRouletteModal();
+        }
+      }
+    });
+
+    // --- Initialization ---
+    async function init() {
+      loadSettings();
+
       const urlParams = new URLSearchParams(window.location.search);
       const shareCode = urlParams.get("share");
 
@@ -751,13 +2253,17 @@
           isSharedMode = true;
           document.getElementById("shared-banner").style.display = "flex";
         } else {
-          loadFromCookie();
+          loadState();
         }
       } else {
-        loadFromCookie();
+        loadState();
       }
 
       renderGrid();
+      updateProgressBars();
+
+      // Dynamically fetch newest live patch & champions in background
+      await loadDataDragonRoster();
     }
 
     init();
