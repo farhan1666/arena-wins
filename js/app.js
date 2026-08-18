@@ -308,23 +308,22 @@ function renderGrid() {
   filtered.forEach(c => {
     const isWon = champions[c.name];
     const primaryTag = c.tags && c.tags.length ? c.tags[0] : "";
+    const safeAttr = c.name.replace(/"/g, "&quot;");
 
     html += `
       <div class="champ-card ${isWon ? 'completed' : ''}" 
-           data-champ="${c.name}"
-           onclick="handleCardClick('${c.name}')" 
-           oncontextmenu="openContextMenu(event, '${c.name}')">
+           data-champ="${safeAttr}">
         <div class="portrait-wrap">
           <img class="portrait-img" 
                src="${getImgUrl(c)}" 
-               alt="${c.name}" 
+               alt="${safeAttr}" 
                loading="lazy" 
                onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'70\\' height=\\'70\\'><rect width=\\'70\\' height=\\'70\\' fill=\\'%230e1a26\\'/></svg>';">
           <div class="win-overlay">
             <div class="win-badge">✓</div>
           </div>
         </div>
-        <div class="champ-name" title="${c.name} - ${c.title || ''}">${c.name}</div>
+        <div class="champ-name" title="${safeAttr} - ${(c.title || '').replace(/"/g, '&quot;')}">${c.name}</div>
         <div class="champ-role-tag">${primaryTag}</div>
       </div>
     `;
@@ -768,6 +767,23 @@ document.addEventListener("keydown", (e) => {
 // --- Initialization ---
 async function init() {
   loadSettings();
+
+  const grid = document.getElementById("champ-grid");
+  if (grid) {
+    grid.addEventListener("click", (e) => {
+      const card = e.target.closest(".champ-card");
+      if (card && card.dataset.champ) {
+        handleCardClick(card.dataset.champ);
+      }
+    });
+
+    grid.addEventListener("contextmenu", (e) => {
+      const card = e.target.closest(".champ-card");
+      if (card && card.dataset.champ) {
+        openContextMenu(e, card.dataset.champ);
+      }
+    });
+  }
 
   const urlParams = new URLSearchParams(window.location.search);
   const shareCode = urlParams.get("share");
