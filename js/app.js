@@ -160,10 +160,11 @@ function getCookie(name) {
 
 // --- URL Safe Base64 Bitfield Share Utility ---
 function encodeProgressToBase64() {
-  const numBytes = Math.ceil(CANONICAL_FALLBACK_ROSTER.length / 8);
+  // Use the current championRoster length for bitfield size to include dynamically loaded champions
+  const numBytes = Math.ceil(championRoster.length / 8);
   const byteArray = new Uint8Array(numBytes);
 
-  CANONICAL_FALLBACK_ROSTER.forEach((champ, idx) => {
+  championRoster.forEach((champ, idx) => {
     if (champions[champ.name]) {
       const byteIdx = Math.floor(idx / 8);
       const bitIdx = idx % 8;
@@ -171,6 +172,7 @@ function encodeProgressToBase64() {
     }
   });
 
+  // Convert byte array to binary string for Base64 encoding
   let binary = '';
   byteArray.forEach(b => binary += String.fromCharCode(b));
   return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -178,6 +180,7 @@ function encodeProgressToBase64() {
 
 function decodeProgressFromBase64(base64Str) {
   try {
+    // Pad Base64 string if necessary
     let pad = base64Str.replace(/-/g, '+').replace(/_/g, '/');
     while (pad.length % 4) pad += '=';
     const binary = atob(pad);
@@ -187,9 +190,11 @@ function decodeProgressFromBase64(base64Str) {
     }
 
     const decoded = {};
+    // Initialize all champions as not won
     championRoster.forEach(c => decoded[c.name] = false);
 
-    CANONICAL_FALLBACK_ROSTER.forEach((champ, idx) => {
+    // Map bits to champions based on the current roster order
+    championRoster.forEach((champ, idx) => {
       const byteIdx = Math.floor(idx / 8);
       const bitIdx = idx % 8;
       decoded[champ.name] = byteIdx < byteArray.length ? Boolean(byteArray[byteIdx] & (1 << bitIdx)) : false;
