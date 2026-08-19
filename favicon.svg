@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <style>
+    path, circle {
+      fill: #111111;
+      stroke: #111111;
+    }
+    .stem {
+      fill: none !important;
+      stroke-width: 4px;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .leaf {
+      stroke: none !important;
+    }
+    .cherry {
+      stroke: none !important;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      path, circle {
+        fill: #ffffff;
+        stroke: #ffffff;
+      }
+    }
+  </style>
+
+  <!-- Left Stem -->
+  <path class="stem" d="M43 9 C36 20 25 26 22 40" />
+
+  <!-- Right Stem -->
+  <path class="stem" d="M43 9 C44 22 41 28 43 41" />
+
+  <!-- Leaf -->
+  <path class="leaf" d="M43 9 C53 4 61 11 56 19 C49 23 42 16 43 9 Z" />
+
+  <!-- Left Cherry -->
+  <circle class="cherry" cx="22" cy="42" r="13" />
+
+  <!-- Right Cherry -->
+  <circle class="cherry" cx="43" cy="43" r="13" />
+</svg>
