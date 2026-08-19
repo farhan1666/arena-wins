@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Arena Win Tracker | League of Legends Arena God Challenge</title>
-  <meta name="description" content="Track your champion 1st place wins in League of Legends Arena mode. Track progress toward the 60-win Arena God challenge title, roll random champions, and share progress.">
+  <meta name="description"
+    content="Track your champion 1st place wins in League of Legends Arena mode. Track progress toward the 60-win Arena God challenge title, roll random champions, and share progress.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?">
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
   <!-- Shared View Banner -->
@@ -34,7 +39,8 @@
       </div>
 
       <div class="header-actions">
-        <button class="btn-primary" id="btn-roll" onclick="openRouletteModal()" title="Randomly pick a champion to play next (Hotkey: R or Space)">
+        <button class="btn-primary" id="btn-roll" onclick="openRouletteModal()"
+          title="Randomly pick a champion to play next (Hotkey: R or Space)">
           🎲 Roll Champion <span class="hotkey-tag">R</span>
         </button>
         <button id="undo-btn" disabled onclick="undoAction()" title="Undo last mark/unmark action (Hotkey: Ctrl+Z)">
@@ -74,7 +80,8 @@
             🌟 Roster Mastery
           </span>
           <span class="progress-count" id="roster-mastery-count">
-            Won: <strong id="won-count-val">0</strong> | Remaining: <strong id="rem-count-val">0</strong> | Total: <span id="total-count-val">0</span>
+            Won: <strong id="won-count-val">0</strong> | Remaining: <strong id="rem-count-val">0</strong> | Total: <span
+              id="total-count-val">0</span>
           </span>
         </div>
         <div class="progress-track">
@@ -89,15 +96,19 @@
     <div class="search-and-tabs">
       <div class="search-box-wrapper">
         <span class="search-icon">🔍</span>
-        <input type="text" id="search-input" class="search-input" placeholder="Search champion or alias (e.g. MF, J4, ASol)..." oninput="handleSearchInput()">
+        <input type="text" id="search-input" class="search-input"
+          placeholder="Search champion or alias (e.g. MF, J4, ASol)..." oninput="handleSearchInput()">
         <span id="search-clear" class="search-clear" onclick="clearSearch()">✕</span>
         <span class="search-hint">/</span>
       </div>
 
       <div class="status-tabs">
-        <button class="tab-btn active" id="tab-remaining" onclick="switchTab('remaining', this)">Remaining (<span id="tab-rem-cnt">0</span>)</button>
-        <button class="tab-btn" id="tab-completed" onclick="switchTab('completed', this)">Completed (<span id="tab-comp-cnt">0</span>)</button>
-        <button class="tab-btn" id="tab-all" onclick="switchTab('all', this)">All (<span id="tab-all-cnt">0</span>)</button>
+        <button class="tab-btn active" id="tab-remaining" onclick="switchTab('remaining', this)">Remaining (<span
+            id="tab-rem-cnt">0</span>)</button>
+        <button class="tab-btn" id="tab-completed" onclick="switchTab('completed', this)">Completed (<span
+            id="tab-comp-cnt">0</span>)</button>
+        <button class="tab-btn" id="tab-all" onclick="switchTab('all', this)">All (<span
+            id="tab-all-cnt">0</span>)</button>
       </div>
     </div>
 
@@ -174,7 +185,8 @@
       <!-- Tab: Share Link -->
       <div id="data-sec-share-link">
         <p style="font-size: 0.86rem; color: var(--text-muted); margin-top: 0;">
-          Generate a URL-safe link with your progress encoded. Anyone opening this link can view your progress without overriding their own tracker!
+          Generate a URL-safe link with your progress encoded. Anyone opening this link can view your progress without
+          overriding their own tracker!
         </p>
         <textarea id="share-link-input" class="code-box" readonly></textarea>
         <div style="margin-top: 12px; display: flex; gap: 8px;">
@@ -201,10 +213,13 @@
         <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px;">
           <button class="btn-cyan" onclick="exportJsonFile()">💾 Download Backup (.json)</button>
           <button onclick="document.getElementById('import-file-input').click()">📂 Upload Backup File</button>
-          <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="importJsonFile(event)">
+          <input type="file" id="import-file-input" accept=".json" style="display: none;"
+            onchange="importJsonFile(event)">
         </div>
-        <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 4px;">Or paste raw JSON / champion names below:</p>
-        <textarea id="raw-json-input" class="code-box" placeholder='Paste JSON or comma-separated champion names...'></textarea>
+        <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 4px;">Or paste raw JSON / champion names
+          below:</p>
+        <textarea id="raw-json-input" class="code-box"
+          placeholder='Paste JSON or comma-separated champion names...'></textarea>
         <div style="margin-top: 8px;">
           <button onclick="importRawData()">Import Raw Data</button>
         </div>
@@ -289,4 +304,5 @@
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
 </body>
+
 </html>
