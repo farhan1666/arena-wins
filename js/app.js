@@ -8,6 +8,23 @@ let DATA_DRAGON_VERSION = DEFAULT_DATA_DRAGON_VERSION;
 let champions = {};              // { [champName]: boolean }
 let championRoster = [...CANONICAL_FALLBACK_ROSTER];
 let historyStack = [];
+let championIndex = {}; // Mapping champion name -> stable index for bitfield encoding
+// Initialize index mapping based on fallback roster order and any dynamic entries
+function initializeChampionIndices() {
+  championIndex = {};
+  let idx = 0;
+  // Fallback roster first (stable order)
+  CANONICAL_FALLBACK_ROSTER.forEach(c => {
+    championIndex[c.name] = idx++;
+  });
+  // Add any other champions not in fallback, preserving current roster order
+  championRoster.forEach(c => {
+    if (!championIndex.hasOwnProperty(c.name)) {
+      championIndex[c.name] = idx++;
+    }
+  });
+}
+initializeChampionIndices(); // Initial setup
 let currentTab = "remaining";    // 'remaining' | 'completed' | 'all'
 let currentRole = "all";         // 'all' | 'Fighter' | 'Tank' | 'Mage' | 'Assassin' | 'Marksman' | 'Support'
 let searchQuery = "";
@@ -37,7 +54,7 @@ async function loadDataDragonRoster() {
     const champRes = await fetch(`https://ddragon.leagueoflegends.com/cdn/${DATA_DRAGON_VERSION}/data/en_US/champion.json`);
     if (!champRes.ok) return;
     const champData = await champRes.json();
-    
+
     if (champData && champData.data) {
       const fetchedList = [];
       const seen = new Set();
@@ -64,6 +81,7 @@ async function loadDataDragonRoster() {
       // Sort alphabetically
       fetchedList.sort((a, b) => a.name.localeCompare(b.name));
       championRoster = fetchedList;
+initializeChampionIndices();
 
       // Ensure state object has all keys
       championRoster.forEach(c => {
@@ -87,7 +105,7 @@ function loadSettings() {
     if (saved) {
       settings = { ...settings, ...JSON.parse(saved) };
     }
-  } catch (e) {}
+  } catch (e) { }
   document.getElementById("setting-quick-click").checked = settings.quickClick;
   document.getElementById("setting-auto-patch").checked = settings.autoPatch;
 }
@@ -95,7 +113,7 @@ function loadSettings() {
 function saveSettings() {
   try {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  } catch (e) {}
+  } catch (e) { }
 }
 
 function updateSetting(key, val) {
@@ -111,7 +129,7 @@ function saveState() {
   try {
     const wonList = championRoster.filter(c => champions[c.name]).map(c => c.name);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(wonList));
-  } catch (e) {}
+  } catch (e) { }
 }
 
 function loadState() {
@@ -130,7 +148,7 @@ function loadState() {
         return;
       }
     }
-  } catch (e) {}
+  } catch (e) { }
 
   // 2. Fallback: migrate from legacy cookie
   try {
@@ -144,7 +162,7 @@ function loadState() {
         saveState(); // Migrate to localStorage
       }
     }
-  } catch (e) {}
+  } catch (e) { }
 }
 
 function getCookie(name) {
@@ -160,27 +178,25 @@ function getCookie(name) {
 
 // --- URL Safe Base64 Bitfield Share Utility ---
 function encodeProgressToBase64() {
-  // Use the current championRoster length for bitfield size to include dynamically loaded champions
-  const numBytes = Math.ceil(championRoster.length / 8);
+  // Use stable champion indices to build a bitfield.
+  const totalChampCount = Object.keys(championIndex).length;
+  const numBytes = Math.ceil(totalChampCount / 8);
   const byteArray = new Uint8Array(numBytes);
-
-  championRoster.forEach((champ, idx) => {
-    if (champions[champ.name]) {
+  for (const name in champions) {
+    if (champions[name]) {
+      const idx = championIndex[name];
       const byteIdx = Math.floor(idx / 8);
       const bitIdx = idx % 8;
       byteArray[byteIdx] |= (1 << bitIdx);
     }
-  });
-
-  // Convert byte array to binary string for Base64 encoding
+  }
   let binary = '';
   byteArray.forEach(b => binary += String.fromCharCode(b));
   return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
-
 function decodeProgressFromBase64(base64Str) {
   try {
-    // Pad Base64 string if necessary
+    // Convert URL‑safe Base64 back to regular Base64 and pad
     let pad = base64Str.replace(/-/g, '+').replace(/_/g, '/');
     while (pad.length % 4) pad += '=';
     const binary = atob(pad);
@@ -188,17 +204,20 @@ function decodeProgressFromBase64(base64Str) {
     for (let i = 0; i < binary.length; i++) {
       byteArray[i] = binary.charCodeAt(i);
     }
-
     const decoded = {};
-    // Initialize all champions as not won
+    // Initialise all champions as not won
     championRoster.forEach(c => decoded[c.name] = false);
-
-    // Map bits to champions based on the current roster order
-    championRoster.forEach((champ, idx) => {
+    // Ensure index mapping is ready
+    if (Object.keys(championIndex).length === 0) {
+      initializeChampionIndices();
+    }
+    // Map bits to champions using stable indices
+    for (const name in championIndex) {
+      const idx = championIndex[name];
       const byteIdx = Math.floor(idx / 8);
       const bitIdx = idx % 8;
-      decoded[champ.name] = byteIdx < byteArray.length ? Boolean(byteArray[byteIdx] & (1 << bitIdx)) : false;
-    });
+      decoded[name] = byteIdx < byteArray.length ? Boolean(byteArray[byteIdx] & (1 << bitIdx)) : false;
+    }
     return decoded;
   } catch (e) {
     console.error("Failed to decode share code:", e);
